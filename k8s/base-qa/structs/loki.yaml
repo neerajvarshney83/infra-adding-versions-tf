@@ -1,0 +1,290 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: loki
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: loki
+    chart: loki-2.3.0
+    heritage: Helm
+    release: platform
+  name: platform-loki
+  namespace: loki
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  labels:
+    app: loki
+    chart: loki-2.3.0
+    heritage: Helm
+    release: platform
+  name: platform-loki
+spec:
+  allowPrivilegeEscalation: false
+  fsGroup:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  privileged: false
+  readOnlyRootFilesystem: true
+  requiredDropCapabilities:
+  - ALL
+  runAsUser:
+    rule: MustRunAsNonRoot
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  volumes:
+  - configMap
+  - emptyDir
+  - persistentVolumeClaim
+  - secret
+  - projected
+  - downwardAPI
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app: loki
+    chart: loki-2.3.0
+    heritage: Helm
+    release: platform
+  name: platform-loki
+  namespace: loki
+rules:
+- apiGroups:
+  - extensions
+  resourceNames:
+  - platform-loki
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app: loki
+    chart: loki-2.3.0
+    heritage: Helm
+    release: platform
+  name: platform-loki
+  namespace: loki
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: platform-loki
+subjects:
+- kind: ServiceAccount
+  name: platform-loki
+  namespace: loki
+---
+apiVersion: v1
+data:
+  loki.yaml: YXV0aF9lbmFibGVkOiBmYWxzZQpjaHVua19zdG9yZV9jb25maWc6CiAgbWF4X2xvb2tfYmFja19wZXJpb2Q6IDIzNTJoCmNvbXBhY3RvcjoKICBzaGFyZWRfc3RvcmU6IGZpbGVzeXN0ZW0KICB3b3JraW5nX2RpcmVjdG9yeTogL2RhdGEvbG9raS9ib2x0ZGItc2hpcHBlci1jb21wYWN0b3IKaW5nZXN0ZXI6CiAgY2h1bmtfYmxvY2tfc2l6ZTogMjYyMTQ0CiAgY2h1bmtfaWRsZV9wZXJpb2Q6IDNtCiAgY2h1bmtfcmV0YWluX3BlcmlvZDogMW0KICBsaWZlY3ljbGVyOgogICAgcmluZzoKICAgICAga3ZzdG9yZToKICAgICAgICBzdG9yZTogaW5tZW1vcnkKICAgICAgcmVwbGljYXRpb25fZmFjdG9yOiAxCiAgbWF4X3RyYW5zZmVyX3JldHJpZXM6IDAKbGltaXRzX2NvbmZpZzoKICBlbmZvcmNlX21ldHJpY19uYW1lOiBmYWxzZQogIHJlamVjdF9vbGRfc2FtcGxlczogdHJ1ZQogIHJlamVjdF9vbGRfc2FtcGxlc19tYXhfYWdlOiAxNjhoCnNjaGVtYV9jb25maWc6CiAgY29uZmlnczoKICAtIGZyb206ICIyMDIwLTEwLTI0IgogICAgaW5kZXg6CiAgICAgIHBlcmlvZDogMjRoCiAgICAgIHByZWZpeDogaW5kZXhfCiAgICBvYmplY3Rfc3RvcmU6IGZpbGVzeXN0ZW0KICAgIHNjaGVtYTogdjExCiAgICBzdG9yZTogYm9sdGRiLXNoaXBwZXIKc2VydmVyOgogIGh0dHBfbGlzdGVuX3BvcnQ6IDMxMDAKc3RvcmFnZV9jb25maWc6CiAgYm9sdGRiX3NoaXBwZXI6CiAgICBhY3RpdmVfaW5kZXhfZGlyZWN0b3J5OiAvZGF0YS9sb2tpL2JvbHRkYi1zaGlwcGVyLWFjdGl2ZQogICAgY2FjaGVfbG9jYXRpb246IC9kYXRhL2xva2kvYm9sdGRiLXNoaXBwZXItY2FjaGUKICAgIGNhY2hlX3R0bDogMjRoCiAgICBzaGFyZWRfc3RvcmU6IGZpbGVzeXN0ZW0KICBmaWxlc3lzdGVtOgogICAgZGlyZWN0b3J5OiAvZGF0YS9sb2tpL2NodW5rcwp0YWJsZV9tYW5hZ2VyOgogIHJldGVudGlvbl9kZWxldGVzX2VuYWJsZWQ6IHRydWUKICByZXRlbnRpb25fcGVyaW9kOiAyMzUyaA==
+kind: Secret
+metadata:
+  labels:
+    app: loki
+    chart: loki-2.3.0
+    heritage: Helm
+    release: platform
+  name: platform-loki
+  namespace: loki
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: loki
+    chart: loki-2.3.0
+    heritage: Helm
+    release: platform
+  name: platform-loki
+  namespace: loki
+spec:
+  ports:
+  - name: http-metrics
+    port: 3100
+    protocol: TCP
+    targetPort: http-metrics
+  selector:
+    app: loki
+    release: platform
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: loki
+    chart: loki-2.3.0
+    heritage: Helm
+    release: platform
+    variant: headless
+  name: platform-loki-headless
+  namespace: loki
+spec:
+  clusterIP: None
+  ports:
+  - name: http-metrics
+    port: 3100
+    protocol: TCP
+    targetPort: http-metrics
+  selector:
+    app: loki
+    release: platform
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: loki
+    chart: loki-2.3.0
+    heritage: Helm
+    release: platform
+  name: platform-loki
+  namespace: loki
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loki
+      release: platform
+  serviceName: platform-loki-headless
+  template:
+    metadata:
+      annotations:
+        checksum/config: 0a45b278c669e5cddb47ccee4a731fa1eeed2a788cec51665076a10be74ed2aa
+        prometheus.io/port: http-metrics
+        prometheus.io/scrape: "true"
+      labels:
+        app: loki
+        name: loki
+        release: platform
+    spec:
+      affinity: {}
+      containers:
+      - args:
+        - -config.file=/etc/loki/loki.yaml
+        env: null
+        image: grafana/loki:2.1.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /ready
+            port: http-metrics
+          initialDelaySeconds: 45
+        name: loki
+        ports:
+        - containerPort: 3100
+          name: http-metrics
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http-metrics
+          initialDelaySeconds: 45
+        resources:
+          limits:
+            cpu: 2
+            memory: 4096Mi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /etc/loki
+          name: config
+        - mountPath: /data
+          name: storage
+          subPath: null
+      - args:
+        - --reporter.grpc.host-port=dns:///stream-collector-headless.jaeger.svc.cluster.local:14250
+        - --reporter.type=grpc
+        image: jaegertracing/jaeger-agent:1.18
+        imagePullPolicy: IfNotPresent
+        name: jaeger-agent
+        ports:
+        - containerPort: 5775
+          name: zk-compact-trft
+          protocol: UDP
+        - containerPort: 5778
+          name: config-rest
+          protocol: TCP
+        - containerPort: 6831
+          name: jg-compact-trft
+          protocol: UDP
+        - containerPort: 6832
+          name: jg-binary-trft
+          protocol: UDP
+        - containerPort: 14271
+          name: admin-http
+          protocol: TCP
+      initContainers: []
+      nodeSelector: {}
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+      serviceAccountName: platform-loki
+      terminationGracePeriodSeconds: 4800
+      tolerations: []
+      volumes:
+      - name: config
+        secret:
+          secretName: platform-loki
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      annotations: {}
+      name: storage
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 128Gi
+      storageClassName: stable
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: loki
+    chart: loki-2.3.0
+    heritage: Helm
+    release: platform
+  name: platform-loki
+  namespace: loki
+spec:
+  endpoints:
+  - interval: 15s
+    port: http-metrics
+    scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+    - loki
+  selector:
+    matchLabels:
+      app: loki
+      release: platform
+      variant: headless

@@ -1,0 +1,26 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: api-tests-role
+  namespace: tekton-pipelines
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - "configmaps"
+    verbs:
+      - "watch"
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: api-tests-role-binding
+  namespace: tekton-pipelines
+subjects:
+  - kind: ServiceAccount
+    name: api-tests
+    namespace: int
+roleRef:
+  kind: Role
+  name: api-tests-role
+  apiGroup: rbac.authorization.k8s.io

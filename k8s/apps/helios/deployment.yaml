@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mino-helios
+  labels:
+    app: mino-helios
+spec:
+  progressDeadlineSeconds: 30
+  selector:
+    matchLabels:
+      app: mino-helios
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: mino-helios
+    spec:
+      containers:
+        - image: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-helios:latest
+          name: mino-helios
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mino-helios-env-vars
+          env:
+            - name: AUTH0_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mino-helios-auth0-client-secret
+                  key: password
+            - name: AUTH0_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mino-helios-auth0-secret
+                  key: password
+            - name: SENTRY_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: mino-helios-sentry-auth-token
+                  key: password
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              port: 3000
+              path: /
+            initialDelaySeconds: 60
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              port: 3000
+              path: /
+            initialDelaySeconds: 60
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              memory: "128Mi"

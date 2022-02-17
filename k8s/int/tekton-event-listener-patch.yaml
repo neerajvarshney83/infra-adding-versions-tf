@@ -1,0 +1,21 @@
+- op: add
+  path: "/spec/triggers/-"
+  value:
+    name: terraform-app-provisioning
+    bindings:
+      - kind: TriggerBinding
+        ref: infra-cd
+    interceptors:
+      - github:
+          eventTypes:
+            - push
+          secretRef:
+            secretKey: secret-string
+            secretName: git-webhook
+      - cel:
+          filter: |-
+            (header.match('X-GitHub-Event', 'push') &&
+             body.repository.name == 'infra') &&
+             body.ref.startsWith('refs/heads/master')
+    template:
+      name: terraform-app-provisioning

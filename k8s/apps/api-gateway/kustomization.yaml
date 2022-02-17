@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - disruptionbudget.yaml
+  - service.yaml
+  - service-monitor.yaml
+
+configMapGenerator:
+  - name: mino-api-gateway-env-vars
+    literals:
+      - SENTRY_DSN=https://d80868a0f022466590d38b1053e283bb@sentry.io/2035315

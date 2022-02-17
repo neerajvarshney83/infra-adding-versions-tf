@@ -1,0 +1,306 @@
+apiVersion: kops.k8s.io/v1alpha2
+kind: Cluster
+metadata:
+  creationTimestamp: "2020-06-01T14:35:55Z"
+  generation: 11
+  name: qa.us-east-1.dev.gen6bk.com
+spec:
+  additionalPolicies:
+    master: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "kms:CreateGrant",
+            "kms:Decrypt",
+            "kms:DescribeKey",
+            "kms:Encrypt",
+            "kms:GenerateDataKey*",
+            "kms:ReEncrypt*"
+          ],
+          "Resource": [
+            "arn:aws:kms:us-east-1:629239191919:key/4af86a56-640f-4b71-a47c-2e80088af4fd"
+          ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetResourcePolicy",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:ListSecretVersionIds"
+            ],
+            "Resource": "arn:aws:secretsmanager:*:629239191919:secret:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ChangeResourceRecordSets"
+            ],
+            "Resource": [
+                "arn:aws:route53:::hostedzone/Z03983575TS17KQEBADW",
+                "arn:aws:route53:::hostedzone/Z048109635VL269UP6JHK"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetChange"
+            ],
+            "Resource": [
+                "arn:aws:route53:::change/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ListHostedZones",
+                "route53:ListResourceRecordSets"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+               "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:DescribeTags"
+            ],
+            "Resource": [ "*" ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup"
+            ],
+            "Resource": [ "arn:aws:autoscaling:us-east-1:629239191919:::autoScalingGroupName/nodes.qa.us-east-1.dev.gen6bk.com" ]
+        }
+      ]
+    node: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "kms:CreateGrant",
+            "kms:Decrypt",
+            "kms:DescribeKey",
+            "kms:Encrypt",
+            "kms:GenerateDataKey*",
+            "kms:ReEncrypt*"
+          ],
+          "Resource": [
+            "arn:aws:kms:us-east-1:629239191919:key/4af86a56-640f-4b71-a47c-2e80088af4fd",
+            "arn:aws:kms:us-east-1:629239191919:key/d00f4910-e74f-4fcc-b24e-2738305ee8ac"
+          ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetResourcePolicy",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:ListSecretVersionIds"
+            ],
+            "Resource": "arn:aws:secretsmanager:*:629239191919:secret:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ChangeResourceRecordSets"
+            ],
+            "Resource": [
+                "arn:aws:route53:::hostedzone/Z03983575TS17KQEBADW",
+                "arn:aws:route53:::hostedzone/Z048109635VL269UP6JHK"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetChange"
+            ],
+            "Resource": [
+                "arn:aws:route53:::change/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ListHostedZones",
+                "route53:ListResourceRecordSets"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+          "Sid": "DownloadandUpload",
+          "Action": [
+            "s3:GetObject",
+            "s3:GetObjectVersion",
+            "s3:PutObject",
+            "s3:PutObjectAcl"
+          ],
+          "Effect": "Allow",
+          "Resource": "arn:aws:s3:::gen6-dev-qa-logs/*"
+        },
+        {
+          "Sid": "ListBucket",
+          "Action": [
+            "s3:ListBucket"
+          ],
+          "Effect": "Allow",
+          "Resource": "arn:aws:s3:::gen6-dev-qa-logs"
+        }
+      ]
+  api:
+    loadBalancer:
+      class: Classic
+      type: Internal
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  clusterAutoscaler:
+    enabled: true
+    skipNodesWithLocalStorage: true
+    skipNodesWithSystemPods: true
+  configBase: s3://us-east-1-dev-gen6-state/qa.us-east-1.dev.gen6bk.com
+  dnsZone: Z048109635VL269UP6JHK
+  etcdClusters:
+  - cpuRequest: 200m
+    etcdMembers:
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1a
+      name: a
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1b
+      name: b
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1c
+      name: c
+    memoryRequest: 100Mi
+    name: main
+  - cpuRequest: 100m
+    etcdMembers:
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1a
+      name: a
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1b
+      name: b
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1c
+      name: c
+    memoryRequest: 100Mi
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  certManager:
+    enabled: true
+    managed: false
+  kubeAPIServer:
+    anonymousAuth: false
+    runtimeConfig:
+      "settings.k8s.io/v1alpha1": "true"
+    enableAdmissionPlugins:
+      - NamespaceLifecycle
+      - LimitRanger
+      - ServiceAccount
+      - PersistentVolumeLabel
+      - DefaultStorageClass
+      - DefaultTolerationSeconds
+      - MutatingAdmissionWebhook
+      - ValidatingAdmissionWebhook
+      - NodeRestriction
+      - ResourceQuota
+      - PodPreset
+    apiAudiences:
+    - api
+    - istio-ca
+    authorizationMode: Node,RBAC
+    featureGates:
+      EphemeralContainers: "true"
+    oidcClientID: dex-k8s-authenticator
+    oidcGroupsClaim: groups
+    oidcIssuerURL: https://dex.qa.us-east-1.dev.gen6bk.com
+    oidcUsernameClaim: email
+    serviceAccountIssuer: kubernetes.default.svc
+    serviceAccountKeyFile:
+    - /srv/kubernetes/service-account.key
+    serviceAccountSigningKeyFile: /srv/kubernetes/service-account.key
+  kubeControllerManager:
+    authorizationAlwaysAllowPaths:
+    - /metrics
+    - /healthz
+  kubeDNS:
+    provider: CoreDNS
+  kubeScheduler:
+    authorizationAlwaysAllowPaths:
+    - /metrics
+    - /healthz
+  kubelet:
+    anonymousAuth: false
+    authenticationTokenWebhook: true
+    authorizationMode: Webhook
+    featureGates:
+      EphemeralContainers: "true"
+  kubernetesApiAccess:
+  - 0.0.0.0/0
+  kubernetesVersion: 1.19.11
+  masterInternalName: api.internal.qa.us-east-1.dev.gen6bk.com
+  masterPublicName: api.qa.us-east-1.dev.gen6bk.com
+  networkCIDR: 172.20.0.0/16
+  networking:
+    cilium:
+      hubble:
+        enabled: true
+        metrics:
+        - dns
+        - drop
+        - flow
+        - http
+        - icmp
+        - port-distribution
+        - tcp
+      preallocateBPFMaps: true
+      enablePrometheusMetrics: true
+  nonMasqueradeCIDR: 100.64.0.0/10
+  sshAccess:
+  - 0.0.0.0/0
+  subnets:
+  - cidr: 172.20.32.0/19
+    name: us-east-1a
+    type: Private
+    zone: us-east-1a
+  - cidr: 172.20.64.0/19
+    name: us-east-1b
+    type: Private
+    zone: us-east-1b
+  - cidr: 172.20.96.0/19
+    name: us-east-1c
+    type: Private
+    zone: us-east-1c
+  - cidr: 172.20.0.0/22
+    name: utility-us-east-1a
+    type: Utility
+    zone: us-east-1a
+  - cidr: 172.20.4.0/22
+    name: utility-us-east-1b
+    type: Utility
+    zone: us-east-1b
+  - cidr: 172.20.8.0/22
+    name: utility-us-east-1c
+    type: Utility
+    zone: us-east-1c
+  topology:
+    bastion:
+      bastionPublicName: bastion.qa.us-east-1.dev.gen6bk.com
+    dns:
+      type: Private
+    masters: private
+    nodes: private

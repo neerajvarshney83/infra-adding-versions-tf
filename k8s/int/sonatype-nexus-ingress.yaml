@@ -1,0 +1,38 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nexus
+  namespace: sonatype-nexus
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    cert-manager.io/acme-challenge-type: http01
+    kubernetes.io/ingress.class: nginx-external
+spec:
+  tls:
+  - hosts:
+    - nexus.int.us-east-1.dev.gen6bk.com
+    secretName: nexus-tls
+  rules:
+  - host: nexus.int.us-east-1.dev.gen6bk.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: platform-sonatype-nexus
+          servicePort: 8080
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: nexus
+  namespace: sonatype-nexus
+spec:
+  secretName: nexus-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: nexus.int.us-east-1.dev.gen6bk.com
+  dnsNames:
+    - nexus.int.us-east-1.dev.gen6bk.com

@@ -1,0 +1,18 @@
+---
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: mino-transactions
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mino-transactions
+  template:
+    spec:
+      containers:
+        - name: mino-transactions
+          env:
+            - name: POSTGRES_USER
+              value: transactions
+              valueFrom: null

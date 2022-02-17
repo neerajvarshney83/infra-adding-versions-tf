@@ -1,0 +1,215 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: google
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_ok
+  targets:
+    staticConfig:
+      static:
+        - 'https://www.google.com'
+      labels:
+        environment: prometheus.io
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: auth0
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_ok
+  targets:
+    staticConfig:
+      static:
+        - 'https://mino-prod.auth0.com/'
+      labels:
+        environment: prometheus.io
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: marqeta
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_ok
+  targets:
+    staticConfig:
+      static:
+        - 'https://11fs-api.marqeta.com/'
+      labels:
+        environment: prometheus.io
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: mx
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_ok
+  targets:
+    staticConfig:
+      static:
+        - 'https://atrium.mx.com/'
+      labels:
+        environment: prometheus.io
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: fnbo
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_ok
+  targets:
+    staticConfig:
+      static:
+        - 'https://api.fnbo.io/'
+      labels:
+        environment: prometheus.io
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: plaid
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_ok
+  targets:
+    staticConfig:
+      static:
+        - 'https://production.plaid.com/'
+      labels:
+        environment: prometheus.io
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: intercom
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_ok
+  targets:
+    staticConfig:
+      static:
+        - 'https://api.intercom.io/'
+      labels:
+        environment: prometheus.io
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: twilio
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_ok
+  targets:
+    staticConfig:
+      static:
+        - 'https://api.twilio.com/'
+      labels:
+        environment: prometheus.io
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: sentry
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_ok
+  targets:
+    staticConfig:
+      static:
+        - 'https://sentry.io/'
+      labels:
+        environment: prometheus.io
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: versioncompat
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_ok
+  targets:
+    staticConfig:
+      static:
+        - 'https://gen6-app-version.s3.amazonaws.com/'
+      labels:
+        environment: prometheus.io
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: assets-cdn
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_2xx
+  targets:
+    staticConfig:
+      static:
+        - 'https://assets.prod.milli-bank.com/milliFnboLogoWhite.png'
+      labels:
+        environment: prometheus.io
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: links-cdn
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  prober:
+    url: prometheus-blackbox-exporter.monitoring.svc:9115
+  module: http_2xx
+  targets:
+    staticConfig:
+      static:
+        - 'https://links.prod.milli-bank.com/.well-known/apple-app-site-association'
+      labels:
+        environment: prometheus.io

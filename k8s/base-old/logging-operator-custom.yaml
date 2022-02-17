@@ -1,0 +1,17 @@
+---
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: Logging
+metadata:
+  name: default-log
+  namespace: logging-operator
+spec:
+  controlNamespace: logging-operator
+  enableRecreateWorkloadOnImmutableFieldChange: true
+  fluentbit:
+    metrics:
+      serviceMonitor: true
+  fluentd:
+    scaling:
+      replicas: 3
+    metrics:
+      serviceMonitor: true

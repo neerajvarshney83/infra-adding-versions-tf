@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mino-plaid-mock
+  labels:
+    app: mino-plaid-mock
+    discoverable-swagger: enabled
+spec:
+  ports:
+    - port: 8443
+      name: https
+    - port: 8081
+      name: http-actuator
+  selector:
+    app: mino-plaid-mock
+  type: ClusterIP

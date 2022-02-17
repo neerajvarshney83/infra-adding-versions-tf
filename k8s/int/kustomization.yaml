@@ -1,0 +1,98 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- hubble-ui-ingress.yaml
+- dex-sensitive.yaml
+- externaldns-public.yaml
+- logging-operator-s3.yaml
+- sonatype-nexus.yaml
+- sonatype-nexus-sensitive.yaml
+- sonatype-nexus-ingress.yaml
+- jaeger-sensitive.yaml
+- github-actions-runner.yaml
+- github-actions-runner-sensitive.yaml
+- github-actions-runner-android.yaml
+- mutable-storageclass.yaml
+- tekton-sensitive.yaml
+- tekton-pipeline.yaml
+- tekton-rbac.yaml
+- auth-sensitive.yaml
+- kafka-bridge.yaml
+- postgres.yaml
+- postgres-operator.yaml
+- postgres-operator-sensitive.yaml
+- prometheus-ingress.yaml
+- prometheus-sensitive.yaml
+- prometheus-probes.yaml
+- app-namespace.yaml
+- ../base-int
+- apps
+patchesStrategicMerge:
+- aws-cluster-autoscaler-custom.yaml
+- clusterrole-readonly-custom.yaml
+- dex-custom.yaml
+- cert-manager-custom.yaml
+- jaeger-custom.yaml
+- logging-operator-custom.yaml
+- sonatype-nexus-custom.yaml
+- tekton-custom.yaml
+- auth-custom.yaml
+- kafka-custom.yaml
+- externaldns-custom.yaml
+- prometheus-custom.yaml
+- ingress-nginx-custom.yaml
+
+patchesJson6902:
+- path: tekton-event-listener-patch.yaml
+  target:
+    group: triggers.tekton.dev
+    kind: EventListener
+    name: infra-cd
+    namespace: tekton-pipelines
+    version: v1alpha1
+
+images:
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-accounts
+  newTag: 0.2.59-SNAPSHOT-a3914fc
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-admin-gateway
+  newTag: 0.1.56-SNAPSHOT-632e4f8
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-api-gateway
+  newTag: 0.1.44-SNAPSHOT-b7a0344
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-api-tests
+  newTag: 0.1.25-SNAPSHOT-f9423e4
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-audit
+  newTag: 0.1.4-SNAPSHOT-38591b1
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-cards
+  newTag: 0.1.32-SNAPSHOT-ce62895
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-disclosures
+  newTag: 0.1.14-SNAPSHOT-0532015
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-helios
+  newTag: cd51719
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-identity
+  newTag: 0.1.33-SNAPSHOT-cf2ac57
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-insights
+  newTag: 0.1.18-SNAPSHOT-18f213a
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-kyc
+  newTag: 0.1.18-SNAPSHOT-53145b8
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-notification
+  newTag: 0.1.9-SNAPSHOT-b5e2d7c
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-onboarding
+  newTag: 0.1.49-SNAPSHOT-caa043a
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-ops-ui
+  newTag: 87d51d2
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-plaid-mock
+  newTag: 0.1.22-SNAPSHOT-4ec85f0
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-registrations
+  newTag: 0.1.19-SNAPSHOT-da477e3
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-reporting
+  newTag: 0.2.10-fcfe789
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-test-capabilities
+  newTag: 0.1.26-SNAPSHOT-be335f5
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-transactions
+  newTag: 1.1.68-SNAPSHOT-3317356
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-transfer-rules
+  newTag: 0.1.11-SNAPSHOT-d29ad51
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-webhooks
+  newTag: 0.2.11-SNAPSHOT-7b206a2
+- name: confluentinc/cp-schema-registry
+  newTag: 5.5.2

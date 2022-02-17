@@ -1,0 +1,20 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: mino-audit
+  annotations:
+    kubernetes.io/ingress.class: "nginx-external"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  tls:
+    - secretName: mino-api-tls
+      hosts: ["mino-api-staging.qa.us-east-1.dev.gen6bk.com", "mino-api-qa.dev.gen6bk.com"]
+  rules:
+    - host: mino-api-staging.qa.us-east-1.dev.gen6bk.com
+      http:
+        paths:
+          - path: /audit
+            backend:
+              serviceName: mino-audit
+              servicePort: https

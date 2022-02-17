@@ -1,0 +1,11 @@
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: filerealm-jaeger
+  namespace: eck
+stringData:
+  users: |-
+    jaeger:$2a$10$JwO7wBWHGN/zfXkVIJHV7.UmtBq1R6iA83BBc/PxN1/Y5p9UnlwIa
+  users_roles: |-
+    jaeger:jaeger

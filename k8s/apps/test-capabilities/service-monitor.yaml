@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mino-test-capabilities
+spec:
+  selector:
+    matchLabels:
+      app: mino-test-capabilities
+  endpoints:
+    - port: http-actuator
+      path: '/actuator/prometheus'
+      interval: 10s
+      honorLabels: true

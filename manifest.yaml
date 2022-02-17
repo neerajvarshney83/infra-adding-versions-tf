@@ -1,0 +1,289 @@
+packages:
+   - name: workflows/all-gather-deps
+     path: .github/workflows
+     ref: v21.06.02
+   - name: workflows/all-lint-workflows
+     path: .github/workflows
+     ref: v21.06.02
+   - name: workflows/infra-lint-kubernetes
+     path: .github/workflows
+     ref: v21.06.02
+   - name: k8s/auth
+     path: k8s/base-old/structs/auth
+     ref: v21.06.02
+   - name: k8s/aws-cluster-autoscaler
+     path: k8s/base-old/structs/aws-cluster-autoscaler
+     ref: v21.08.09
+   - name: k8s/cert-manager
+     path: k8s/base-old/structs/cert-manager
+     ref: v21.06.02
+   - name: k8s/sonatype-nexus
+     path: k8s/int/sonatype-nexus
+     ref: v21.06.02
+     release: platform
+   - name: k8s/eck-exporter
+     path: k8s/base-old/structs/eck-exporter
+     ref: v21.06.02
+     release: platform
+   - name: k8s/eck
+     path: k8s/base-old/structs/eck
+     ref: v21.06.02
+   - name: k8s/external-dns
+     path: k8s/base-old/structs/external-dns
+     ref: v21.06.02
+   - name: k8s/external-secrets
+     path: k8s/base-old/structs/external-secrets
+     ref: v21.06.02
+     release: platform
+   - name: k8s/ingress-nginx
+     path: k8s/base-old/structs/ingress-nginx
+     ref: v21.06.02
+   - name: k8s/ingress-nginx-internal
+     path: k8s/base-old/structs/ingress-nginx-internal
+     ref: v21.06.02
+   - name: k8s/jaeger
+     path: k8s/base-old/structs/jaeger
+     ref: v21.06.02
+   - name: k8s/kafka
+     path: k8s/base-old/structs/kafka
+     ref: v21.06.02
+   - name: k8s/kafka-schema-registry
+     path: k8s/base-old/structs/kafka-schema-registry
+     ref: v21.06.02
+     release: platform
+   - name: k8s/postgres-operator
+     path: k8s/base-old/structs/postgres-operator
+     ref: v21.06.02
+   - name: k8s/prometheus
+     path: k8s/base-old/structs/prometheus
+     ref: v21.06.02
+   - name: k8s/prometheus-blackbox
+     path: k8s/base-old/structs/prometheus-blackbox
+     ref: v21.06.02
+   - name: k8s/reloader
+     path: k8s/base/structs/reloader
+     ref: v21.06.02
+   - name: k8s/tekton-pipelines
+     path: k8s/base-old/structs/tekton-pipelines
+     ref: v21.06.02
+   - name: k8s/tekton-prod
+     path: k8s/milli-prod/tekton-prod
+     ref: v21.06.02
+   - name: k8s/dex-rbac
+     path: k8s/base-old/structs/dex-rbac
+     ref: v21.06.02
+     release: platform
+   - name: k8s/dex-k8s-auth
+     path: k8s/base-old/structs/dex-k8s-auth
+     ref: v21.06.02
+     release: platform
+   - name: k8s/logging-operator
+     path: k8s/base-old/structs/logging-operator
+     ref: v21.06.02
+     release: platform
+   - name: k8s/hubble-ui
+     path: k8s/base-old/structs/hubble-ui
+     ref: v21.06.02
+   - name: k8s/loki
+     path: k8s/base-old/structs/loki
+     ref: v21.06.02
+     release: platform
+   - name: terraform/aws-cdn
+     path: terraform/structs/aws-cdn
+     ref: v21.08.12
+   - name: terraform/aws-aurora_serverless
+     path: terraform/structs/aws-aurora_serverless
+     ref: v21.06.02
+   - name: terraform/aws-cloudtrail
+     path: terraform/structs/aws-cloudtrail
+     ref: v21.06.02
+   - name: terraform/aws-guardduty
+     path: terraform/structs/aws-guardduty
+     ref: v21.06.02
+   - name: terraform/aws-elasticache
+     path: terraform/structs/aws-elasticache
+     ref: v21.06.02
+   - name: terraform/aws-ses
+     path: terraform/structs/aws-ses
+     ref: v21.06.02
+   - name: terraform/aws-kops-seed
+     path: terraform/structs/aws-kops-seed
+     ref: v21.06.08
+   - name: terraform/aws-cloudtrail
+     path: terraform/structs/aws-cloudtrail
+     ref: v21.06.02
+   - name: terraform/aws-iam-user-password-management
+     path: terraform/structs/aws-iam-user-password-management
+     ref: v21.08.09
+   - name: terraform/aws-iam-account-policy
+     path: terraform/structs/aws-iam-account-policy
+     ref: v21.06.02
+   - name: terraform/aws-s3-logs
+     path: terraform/structs/aws-s3-logs
+     ref: v21.06.08
+   - name: terraform/aws-iam-role
+     path: terraform/structs/aws-iam-role
+     ref: v21.06.02
+   - name: terraform/terraform-null-label
+     path: terraform/structs/terraform-null-label
+     ref: v21.06.02
+   - name: k8s/silence-operator
+     path: k8s/base/structs/silence-operator
+     ref: v21.06.02
+     release: silence-operator
+   - name: k8s/github-actions-runner
+     path: k8s/int/github-actions-runner
+     ref: v21.06.02
+   - name: terraform/aws-dns-validation
+     path: terraform/structs/aws-dns-validation
+     ref: v21.06.17
+   - name: k8s/auth
+     path: k8s/base-qa/structs/auth
+     ref: v21.06.02
+   - name: k8s/aws-cluster-autoscaler
+     path: k8s/base-qa/structs/aws-cluster-autoscaler
+     ref: v21.08.09
+   - name: k8s/cert-manager
+     path: k8s/base-qa/structs/cert-manager
+     ref: v21.06.02
+     release: platform
+   - name: k8s/eck-exporter
+     path: k8s/base-qa/structs/eck-exporter
+     ref: v21.06.02
+     release: platform
+   - name: k8s/eck
+     path: k8s/base-qa/structs/eck
+     ref: v21.06.02
+   - name: k8s/external-dns
+     path: k8s/base-qa/structs/external-dns
+     ref: v21.06.02
+   - name: k8s/external-secrets
+     path: k8s/base-qa/structs/external-secrets
+     ref: v21.06.02
+     release: platform
+   - name: k8s/ingress-nginx
+     path: k8s/base-qa/structs/ingress-nginx
+     ref: v21.06.02
+   - name: k8s/ingress-nginx-internal
+     path: k8s/base-qa/structs/ingress-nginx-internal
+     ref: v21.06.02
+   - name: k8s/jaeger
+     path: k8s/base-qa/structs/jaeger
+     ref: v21.06.02
+   - name: k8s/kafka
+     path: k8s/base-qa/structs/kafka
+     ref: v21.06.02
+   - name: k8s/kafka-schema-registry
+     path: k8s/base-qa/structs/kafka-schema-registry
+     ref: v21.06.02
+     release: platform
+   - name: k8s/postgres-operator
+     path: k8s/base-qa/structs/postgres-operator
+     ref: v21.06.02
+   - name: k8s/prometheus
+     path: k8s/base-qa/structs/prometheus
+     ref: v21.06.02
+   - name: k8s/prometheus-blackbox
+     path: k8s/base-qa/structs/prometheus-blackbox
+     ref: v21.06.02
+   - name: k8s/reloader
+     path: k8s/base-qa/structs/reloader
+     ref: v21.06.02
+   - name: k8s/tekton-pipelines
+     path: k8s/base-qa/structs/tekton-pipelines
+     ref: v21.06.02
+   - name: k8s/dex-rbac
+     path: k8s/base-qa/structs/dex-rbac
+     ref: v21.06.02
+     release: platform
+   - name: k8s/dex-k8s-auth
+     path: k8s/base-qa/structs/dex-k8s-auth
+     ref: v21.06.02
+     release: platform
+   - name: k8s/logging-operator
+     path: k8s/base-qa/structs/logging-operator
+     ref: v21.06.02
+     release: platform
+   - name: k8s/hubble-ui
+     path: k8s/base-qa/structs/hubble-ui
+     ref: v21.06.02
+   - name: k8s/loki
+     path: k8s/base-qa/structs/loki
+     ref: v21.06.02
+     release: platform
+   - name: k8s/auth
+     path: k8s/base-int/structs/auth
+     ref: v21.06.02
+   - name: k8s/aws-cluster-autoscaler
+     path: k8s/base-int/structs/aws-cluster-autoscaler
+     ref: v21.08.09
+   - name: k8s/cert-manager
+     path: k8s/base-int/structs/cert-manager
+     ref: v21.06.02
+   - name: k8s/eck-exporter
+     path: k8s/base-int/structs/eck-exporter
+     ref: v21.06.02
+     release: platform
+   - name: k8s/eck
+     path: k8s/base-int/structs/eck
+     ref: v21.06.02
+   - name: k8s/external-dns
+     path: k8s/base-int/structs/external-dns
+     ref: v21.06.02
+   - name: k8s/external-secrets
+     path: k8s/base-int/structs/external-secrets
+     ref: v21.06.02
+     release: platform
+   - name: k8s/ingress-nginx
+     path: k8s/base-int/structs/ingress-nginx
+     ref: v21.06.02
+   - name: k8s/ingress-nginx-internal
+     path: k8s/base-int/structs/ingress-nginx-internal
+     ref: v21.06.02
+   - name: k8s/jaeger
+     path: k8s/base-int/structs/jaeger
+     ref: v21.06.02
+   - name: k8s/kafka
+     path: k8s/base-int/structs/kafka
+     ref: v21.06.02
+   - name: k8s/kafka-schema-registry
+     path: k8s/base-int/structs/kafka-schema-registry
+     ref: v21.06.02
+     release: platform
+   - name: k8s/postgres-operator
+     path: k8s/base-int/structs/postgres-operator
+     ref: v21.06.02
+   - name: k8s/prometheus
+     path: k8s/base-int/structs/prometheus
+     ref: v21.06.02
+   - name: k8s/prometheus-blackbox
+     path: k8s/base-int/structs/prometheus-blackbox
+     ref: v21.06.02
+   - name: k8s/reloader
+     path: k8s/base-int/structs/reloader
+     ref: v21.06.02
+   - name: k8s/tekton-pipelines
+     path: k8s/base-int/structs/tekton-pipelines
+     ref: v21.06.02
+   - name: k8s/dex-rbac
+     path: k8s/base-int/structs/dex-rbac
+     ref: v21.06.02
+     release: platform
+   - name: k8s/dex-k8s-auth
+     path: k8s/base-int/structs/dex-k8s-auth
+     ref: v21.06.02
+     release: platform
+   - name: k8s/logging-operator
+     path: k8s/base-int/structs/logging-operator
+     ref: v21.06.02
+     release: platform
+   - name: k8s/hubble-ui
+     path: k8s/base-int/structs/hubble-ui
+     ref: v21.06.02
+   - name: k8s/loki
+     path: k8s/base-int/structs/loki
+     ref: v21.06.02
+     release: platform
+   - name: terraform/aws-iam-policy-loadbalancer
+     path: terraform/structs/aws-iam-policy-loadbalancer
+     ref: v21.08.31

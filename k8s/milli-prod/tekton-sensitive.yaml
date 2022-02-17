@@ -1,0 +1,86 @@
+apiVersion: 'kubernetes-client.io/v1'
+kind: ExternalSecret
+metadata:
+  name: terraform-secrets
+  namespace: tekton-pipelines
+secretDescriptor:
+  backendType: secretsManager
+  dataFrom:
+    - terraform-secrets
+---
+apiVersion: 'kubernetes-client.io/v1'
+kind: ExternalSecret
+metadata:
+  name: git-ssh-key
+  namespace: tekton-pipelines
+spec:
+  template:
+    metadata:
+      annotations:
+        tekton.dev/git-0: github.com
+    type: kubernetes.io/ssh-auth
+  backendType: secretsManager
+  data:
+      - key: git-ssh-key
+        property: ssh-privatekey
+        name: ssh-privatekey
+---
+apiVersion: 'kubernetes-client.io/v1'
+kind: ExternalSecret
+metadata:
+  name: git-web-key
+  namespace: tekton-pipelines
+spec:
+  template:
+    metadata:
+      annotations:
+        tekton.dev/git-0: https://github.com
+    type: kubernetes.io/basic-auth
+  backendType: secretsManager
+  data:
+      - key: git-webhook
+        property: username
+        name: username
+      - key: git-webhook
+        property: access-token
+        name: password
+---
+apiVersion: 'kubernetes-client.io/v1'
+kind: ExternalSecret
+metadata:
+  name: git-webhook
+  namespace: tekton-pipelines
+secretDescriptor:
+  backendType: secretsManager
+  dataFrom:
+    - git-webhook
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: infra-cd-prod
+  namespace: tekton-pipelines
+spec:
+  secretName: infra-cd-prod-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: infra-cd-prod.us-east-1.prod.milli-bank.com
+  dnsNames:
+    - infra-cd-prod.us-east-1.prod.milli-bank.com
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+  labels:
+    internal: "true"
+spec:
+  secretName: tekton-dashboard-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: tekton.us-east-1.prod.milli-bank.com
+  dnsNames:
+    - tekton.us-east-1.prod.milli-bank.com

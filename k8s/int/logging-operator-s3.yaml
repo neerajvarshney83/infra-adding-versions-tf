@@ -1,0 +1,16 @@
+---
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterOutput
+metadata:
+  name: s3-output
+  namespace: logging-operator
+spec:
+  s3:
+    instance_profile_credentials: {}
+    s3_bucket: gen6-dev-int-logs
+    s3_region: us-east-1
+    path: logs/${tag}/%Y/%m/%d/
+    buffer:
+      timekey: 1m
+      timekey_wait: 10s
+      timekey_use_utc: true

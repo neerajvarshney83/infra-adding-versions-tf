@@ -1,0 +1,388 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sonatype-nexus
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: platform-sonatype-nexus
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  blobStoreName: proxied-cache
+  layoutPolicy: PERMISSIVE
+  recipe: MavenProxy
+  remoteUrl: https://dl.bintray.com/apollographql/android
+  strictContentTypeValidation: "true"
+  versionPolicy: RELEASE
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: repository
+    release: platform
+  name: apollo-bintray
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  blobStoreName: proxied-cache
+  layoutPolicy: PERMISSIVE
+  recipe: MavenProxy
+  remoteUrl: https://jcenter.bintray.com/
+  strictContentTypeValidation: "true"
+  versionPolicy: RELEASE
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: repository
+    release: platform
+  name: jcenter
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  blobStoreName: proxied-cache
+  layoutPolicy: STRICT
+  recipe: MavenProxy
+  remoteUrl: http://oss.jfrog.org/artifactory/oss-snapshot-local/
+  strictContentTypeValidation: "true"
+  versionPolicy: SNAPSHOT
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: repository
+    release: platform
+  name: jcenter-snapshots
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  blobStoreName: proxied-cache
+  layoutPolicy: PERMISSIVE
+  recipe: MavenProxy
+  remoteUrl: https://jcenter.bintray.com/
+  strictContentTypeValidation: "false"
+  versionPolicy: RELEASE
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: repository
+    release: platform
+  name: maven-central
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  blobStoreName: proxied-cache
+  members: maven-releases,maven-snapshots,maven-central,jcenter,jcenter-snapshots,spring-milestone,apollo-bintray
+  recipe: MavenGroup
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: repository
+    release: platform
+  name: maven-public
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  blobStoreName: default
+  layoutPolicy: STRICT
+  recipe: MavenHosted
+  strictContentTypeValidation: "false"
+  versionPolicy: RELEASE
+  writePolicy: DENY
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: repository
+    release: platform
+  name: maven-releases
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  blobStoreName: default
+  layoutPolicy: STRICT
+  recipe: MavenHosted
+  strictContentTypeValidation: "false"
+  versionPolicy: SNAPSHOT
+  writePolicy: ALLOW
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: repository
+    release: platform
+  name: maven-snapshots
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  blobStoreName: proxied-cache
+  members: nuget-hosted,nuget.org-proxy
+  recipe: NugetGroup
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: repository
+    release: platform
+  name: nuget-group
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  blobStoreName: default
+  recipe: NugetHosted
+  strictContentTypeValidation: "true"
+  writePolicy: ALLOW
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: repository
+    release: platform
+  name: nuget-hosted
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  blobStoreName: proxied-cache
+  recipe: NugetProxy
+  remoteUrl: https://www.nuget.org/api/v2/
+  strictContentTypeValidation: "true"
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: repository
+    release: platform
+  name: nuget.org-proxy
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  path: /nexus-data/blobs/proxied-cache
+  type: File
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: blobstore
+    release: platform
+  name: proxied-cache
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+data:
+  blobStoreName: proxied-cache
+  layoutPolicy: PERMISSIVE
+  recipe: MavenProxy
+  remoteUrl: https://repo.spring.io/milestone
+  strictContentTypeValidation: "true"
+  versionPolicy: RELEASE
+kind: ConfigMap
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    nexus-type: repository
+    release: platform
+  name: spring-milestone
+  namespace: sonatype-nexus
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    release: platform
+  name: platform-sonatype-nexus
+  namespace: sonatype-nexus
+spec:
+  ports:
+  - name: platform-sonatype-nexus
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: sonatype-nexus
+    release: platform
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: sonatype-nexus
+    chart: sonatype-nexus-2.3.0
+    fullname: platform-sonatype-nexus
+    heritage: Helm
+    release: platform
+  name: platform-sonatype-nexus
+  namespace: sonatype-nexus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonatype-nexus
+      release: platform
+  serviceName: platform-sonatype-nexus
+  template:
+    metadata:
+      labels:
+        app: sonatype-nexus
+        release: platform
+    spec:
+      containers:
+      - env:
+        - name: install4jAddVmParams
+          value: -Xms1200M -Xmx1200M -XX:MaxDirectMemorySize=2G -XX:+UnlockExperimentalVMOptions
+            -XX:+UseCGroupMemoryLimitForHeap
+        - name: NEXUS_SECURITY_RANDOMPASSWORD
+          value: "false"
+        image: 140554600707.dkr.ecr.eu-west-2.amazonaws.com/platform/sonatype-nexus:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: nexus
+        ports:
+        - containerPort: 5003
+          name: nexus-docker-g
+        - containerPort: 8081
+          name: nexus-http
+        readinessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        resources:
+          requests:
+            cpu: 250m
+            memory: 4800Mi
+        volumeMounts:
+        - mountPath: /nexus-data
+          name: platform-sonatype-nexus-data
+        - mountPath: /nexus-data/backup
+          name: platform-sonatype-nexus-backup
+      - env:
+        - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
+          value: GoogleHC
+        - name: CLOUD_IAM_AUTH_ENABLED
+          value: "false"
+        - name: BIND_PORT
+          value: "8080"
+        - name: ENFORCE_HTTPS
+          value: "false"
+        - name: NEXUS_DOCKER_HOST
+          value: null
+        - name: NEXUS_HTTP_HOST
+          value: null
+        - name: UPSTREAM_DOCKER_PORT
+          value: "5003"
+        - name: UPSTREAM_HTTP_PORT
+          value: "8081"
+        - name: UPSTREAM_HOST
+          value: localhost
+        image: quay.io/travelaudience/docker-nexus-proxy:2.6.0
+        imagePullPolicy: IfNotPresent
+        name: nexus-proxy
+        ports:
+        - containerPort: 8080
+          name: nexus-proxy
+        resources:
+          limits:
+            cpu: 200m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+      securityContext:
+        fsGroup: 200
+      serviceAccountName: platform-sonatype-nexus
+      volumes: null
+  volumeClaimTemplates:
+  - metadata:
+      labels:
+        app: sonatype-nexus
+        chart: sonatype-nexus-2.3.0
+        fullname: platform-sonatype-nexus
+        heritage: Helm
+        release: platform
+      name: platform-sonatype-nexus-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 32Gi
+      storageClassName: stable
+  - metadata:
+      labels:
+        app: sonatype-nexus
+        chart: sonatype-nexus-2.3.0
+        fullname: platform-sonatype-nexus
+        heritage: Helm
+        release: platform
+      name: platform-sonatype-nexus-backup
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 512Gi
+      storageClassName: stable

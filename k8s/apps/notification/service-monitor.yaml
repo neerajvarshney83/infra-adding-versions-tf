@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mino-notification
+spec:
+  selector:
+    matchLabels:
+      app: mino-notification
+  endpoints:
+    - port: http-actuator
+      path: '/actuator/prometheus'
+      interval: 10s
+      honorLabels: true

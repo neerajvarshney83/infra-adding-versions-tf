@@ -1,0 +1,104 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: ClusterTask
+metadata:
+  name: k8s-test
+spec:
+  params:
+  - default: qa
+    description: The namespace name for the destination service 
+    name: namespaceName
+    type: string
+  steps:
+  - script: |-
+        apk add curl
+        curl -L "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl" -o /bin/kubectl && chmod +x /bin/kubectl
+        set -ex
+
+        kubectl get deployment -n "${NS}" --output name | xargs -tn1 kubectl rollout status -n "${NS}"
+
+        echo "Used to trigger mino-api-tests, now GitLab handles that"
+    image: alpine
+    name: api-tests
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: terraform-app-provisioning
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: terraformDir
+      description: The path to the terraform dir we're applying, relative to repo root
+      default: terraform/app-provisioning/environment/qa
+    - name: git-url
+      description: The path to the Github repository we should apply
+      default: https://github.com/11fsconsulting/infra.git
+    - name: git-revision
+      description: The revision or tag to apply
+      default: master
+  tasks:
+    - name: fetch-from-git
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: revision
+          value: $(params.git-revision)
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: git-source
+    - name: apply-tf
+      params:
+        - name: terraformDir
+          value: $(params.terraformDir)
+        - name: git-revision
+          value: $(tasks.fetch-from-git.results.commit)
+      runAfter:
+        - fetch-from-git
+      taskRef:
+        kind: ClusterTask
+        name: terraform-apply
+      workspaces:
+        - name: source
+          workspace: git-source
+  workspaces:
+    - name: git-source
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: terraform-app-provisioning
+  namespace: tekton-pipelines
+spec:
+  params:
+    - default: master
+      description: The git revision
+      name: git-revision
+    - description: The git repository url
+      name: git-url
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: terraform-app-provisioning-
+      spec:
+        params:
+          - name: git-url
+            value: $(tt.params.git-url)
+          - name: git-revision
+            value: $(tt.params.git-revision)
+        pipelineRef:
+          name: terraform-app-provisioning
+        serviceAccountName: build-bot
+        workspaces:
+          - name: git-source
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 1Gi
+

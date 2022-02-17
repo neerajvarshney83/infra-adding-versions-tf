@@ -1,0 +1,85 @@
+---
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: mino-identity
+  labels:
+    app: mino-identity
+    db: "mino"
+    auth: "okta"
+  annotations:
+    configmap.reloader.stakater.com/reload: "mino-identity-env-vars"
+    secret.reloader.stakater.com/reload: "milli-server-tls,rds-cert,mino-db-identity-user,mino-identity-intercom-token,mino-identity-client-credentials-secret"
+spec:
+  progressDeadlineSeconds: 140
+  selector:
+    matchLabels:
+      app: mino-identity
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: mino-identity
+        db: "mino"
+        auth: "okta"
+    spec:
+      containers:
+        - image: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-identity:latest
+          name: mino-identity
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mino-identity-env-vars
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-db-identity-user
+                  key: PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mino-db-identity-user
+                  key: ROLE
+            - name: INTERCOM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: mino-identity-intercom-token
+                  key: token
+            - name: CLIENT_CREDENTIALS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-identity-client-credentials-secret
+                  key: client-id
+            - name: CLIENT_CREDENTIALS_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mino-identity-client-credentials-secret
+                  key: client-secret
+          ports:
+            - containerPort: 8443
+              name: https
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "125m"
+              memory: "768Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1536Mi"

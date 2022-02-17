@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appID": "87877VDCK9.com.gen6bk.mino.staging",
+        "paths": [
+          "*"
+        ]
+      },
+      {
+        "appID": "RGCFMAJ3N6.com.fnni.milli.int",
+        "paths": [
+          "*"
+        ]
+      }
+    ],
+    "apps": [ ]
+  }
+}

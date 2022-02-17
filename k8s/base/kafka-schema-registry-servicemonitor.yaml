@@ -1,0 +1,14 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cp-schema-registry
+  namespace: kafka
+spec:
+  selector:
+    matchLabels:
+      app: cp-schema-registry
+  endpoints:
+    - port: prometheus
+      path: '/metrics'
+      interval: 10s

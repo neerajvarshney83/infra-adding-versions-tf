@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: mino-registrations
+  annotations:
+    kubernetes.io/ingress.class: nginx-external
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  tls:
+    - secretName: mino-api-tls
+      hosts:
+        - "mino-api.us-east-1.prod.milli-bank.com"
+  rules:
+    - host: mino-api.us-east-1.prod.milli-bank.com
+      http:
+        paths:
+          - path: /registrations/v1
+            backend:
+              serviceName: mino-registrations
+              servicePort: https

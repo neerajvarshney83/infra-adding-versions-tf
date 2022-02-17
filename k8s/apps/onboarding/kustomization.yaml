@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - disruptionbudget.yaml
+  - service.yaml
+  - service-monitor.yaml
+
+configMapGenerator:
+  - name: mino-onboarding-env-vars
+    literals:
+      - SWAGGER_ENABLED=false
+      - SENTRY_DSN=https://f3a1ca92b2d94daa9d20846085f84260@sentry.io/2183130

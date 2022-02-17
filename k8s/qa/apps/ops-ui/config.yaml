@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mino-ops-ui-env-json
+data:
+  env.admin.json: |
+    {
+      "ADMIN_API_URL": "https://mino-api-staging.qa.us-east-1.dev.gen6bk.com/admin-api/graphql",
+      "AUTH0_CLIENT_ID_OPS_UI": "7S2krXuAFoBlj69HiGDWYbleYU6KCRAH",
+      "AUTH0_DOMAIN": "mino-qa.us.auth0.com"
+    }

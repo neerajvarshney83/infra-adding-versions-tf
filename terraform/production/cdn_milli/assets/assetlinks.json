@@ -1,0 +1,5 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target" : { "namespace": "android_app", "package_name": "com.fnni.milli.app",
+               "sha256_cert_fingerprints": ["65:8E:8A:BD:ED:26:3C:54:E1:49:1A:95:D9:E5:34:3E:71:D6:E1:1B:6A:4D:21:DA:F3:D8:5B:D0:20:03:56:64"] }
+}]

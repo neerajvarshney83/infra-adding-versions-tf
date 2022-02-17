@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - disruptionbudget.yaml
+  - service.yaml
+
+configMapGenerator:
+  - name: mino-webhooks-env-vars
+    literals:
+      - SWAGGER_ENABLED=false
+      - SENTRY_DSN=https://86363d589ca3443ea7aa960cf6f7c989@sentry.io/2634564

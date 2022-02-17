@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-dns-public
+  namespace: external-dns
+spec:
+  selector:
+    matchLabels:
+      app: external-dns-public
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: external-dns-public
+    spec:
+      containers:
+      - args:
+        - --source=ingress
+        - --provider=aws
+        - --domain-filter=dev.gen6bk.com
+        - --aws-zone-type=public
+        - --registry=txt
+        - --annotation-filter=kubernetes.io/ingress.class=nginx-external
+        - --txt-owner-id=external-dns
+        image: registry.opensource.zalan.do/teapot/external-dns:latest
+        name: external-dns
+      securityContext:
+        fsGroup: 65534
+      serviceAccountName: external-dns

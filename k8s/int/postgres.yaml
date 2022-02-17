@@ -1,0 +1,17 @@
+# Note that Postgres currently exists outside the K8 cluster. This merely provides an easy to use address.kind: Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mino-postgres
+spec:
+  type: ExternalName
+  externalName: int-us-east-1.cluster-cbjq3tjwvqw1.us-east-1.rds.amazonaws.com 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mino-postgres
+  namespace: postgres-operator
+spec:
+  type: ExternalName
+  externalName: int-us-east-1.cluster-cbjq3tjwvqw1.us-east-1.rds.amazonaws.com 

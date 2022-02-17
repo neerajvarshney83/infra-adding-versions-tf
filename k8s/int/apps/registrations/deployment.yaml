@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mino-registrations
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: mino-registrations
+  template:
+    spec:
+      containers:
+        - name: mino-registrations
+          env:
+            - name: APNS_CERTIFICATE
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-apns-cert
+                  key: crt
+            - name: APNS_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-apns-cert
+                  key: key
+            - name: APNS_DEV_CERTIFICATE
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-apns-cert-dev
+                  key: crt
+            - name: APNS_DEV_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-apns-cert-dev
+                  key: key

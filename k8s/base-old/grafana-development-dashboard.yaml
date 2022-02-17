@@ -1,0 +1,1348 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-development
+  namespace: monitoring
+data:
+  development.json: |
+      {
+        "annotations": {
+          "list": [
+            {
+              "builtIn": 1,
+              "datasource": "-- Grafana --",
+              "enable": true,
+              "hide": true,
+              "iconColor": "rgba(0, 211, 255, 1)",
+              "name": "Annotations & Alerts",
+              "type": "dashboard"
+            }
+          ]
+        },
+        "editable": true,
+        "gnetId": null,
+        "graphTooltip": 0,
+        "iteration": 1622133113864,
+        "links": [],
+        "panels": [
+          {
+            "datasource": null,
+            "gridPos": {
+              "h": 1,
+              "w": 24,
+              "x": 0,
+              "y": 0
+            },
+            "id": 47,
+            "title": "Availability",
+            "type": "row"
+          },
+          {
+            "datasource": "prometheus",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {},
+                "decimals": 5,
+                "mappings": [],
+                "max": 100,
+                "min": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "dark-red",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 95
+                    },
+                    {
+                      "color": "green",
+                      "value": 97
+                    }
+                  ]
+                },
+                "unit": "percent"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 7,
+              "x": 0,
+              "y": 1
+            },
+            "id": 49,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "none",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "exemplar": false,
+                "expr": "100-\n((count(http_server_requests_seconds_max{exception!=\"None\",outcome!=\"SUCCESS\"} OR on() vector(0))\n+(count(http_server_requests_seconds_max{outcome=\"SUCCESS\"} > 0.3) OR on() vector(0)))\n/\n(count(http_server_requests_seconds_max{exception=\"None\",outcome=\"SUCCESS\"} <= 0.3) OR on() vector(0))\n)*100",
+                "format": "time_series",
+                "instant": false,
+                "interval": "",
+                "intervalFactor": 4,
+                "legendFormat": "",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "Application Availability (30d)",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "mean"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          },
+          {
+            "datasource": "prometheus",
+            "description": "",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {},
+                "decimals": 5,
+                "mappings": [],
+                "max": 1,
+                "min": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "dark-red",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 0.99
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.999
+                    }
+                  ]
+                },
+                "unit": "percentunit"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 6,
+              "x": 7,
+              "y": 1
+            },
+            "id": 50,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "none",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "expr": "apiserver_request:availability30d{verb=\"all\"}",
+                "interval": "",
+                "legendFormat": "",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "Platform Availability (30d)",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "mean"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          },
+          {
+            "datasource": "prometheus",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {},
+                "decimals": 5,
+                "mappings": [],
+                "max": 100,
+                "min": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "dark-red",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 20
+                    },
+                    {
+                      "color": "green",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "percent"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 7,
+              "x": 0,
+              "y": 5
+            },
+            "id": 51,
+            "options": {
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showThresholdLabels": false,
+              "showThresholdMarkers": true,
+              "text": {}
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "expr": "(((100-\n((count(http_server_requests_seconds_max{exception!=\"None\",outcome!=\"SUCCESS\"} OR on() vector(0))\n+(count(http_server_requests_seconds_max{outcome=\"SUCCESS\"} > 0.3) OR on() vector(0)))\n/\n(count(http_server_requests_seconds_max{exception=\"None\",outcome=\"SUCCESS\"} <= 0.3) OR on() vector(0))\n)*100)-95)/(100-95))*100",
+                "format": "time_series",
+                "instant": false,
+                "interval": "",
+                "intervalFactor": 4,
+                "legendFormat": "",
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Application Error Budget (30d)",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "mean"
+                  ]
+                }
+              }
+            ],
+            "type": "gauge"
+          },
+          {
+            "datasource": "prometheus",
+            "description": "",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {},
+                "decimals": 5,
+                "mappings": [],
+                "max": 100,
+                "min": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 10
+                    },
+                    {
+                      "color": "green",
+                      "value": 90
+                    }
+                  ]
+                },
+                "unit": "percent"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 6,
+              "x": 7,
+              "y": 5
+            },
+            "id": 52,
+            "options": {
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showThresholdLabels": false,
+              "showThresholdMarkers": true,
+              "text": {}
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "expr": "(((100*apiserver_request:availability30d{verb=\"all\"})-99.999)/(100-99.999))*100",
+                "interval": "",
+                "legendFormat": "",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "Platform Error Budget (30d)",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "mean"
+                  ]
+                }
+              }
+            ],
+            "type": "gauge"
+          },
+          {
+            "collapsed": false,
+            "datasource": null,
+            "gridPos": {
+              "h": 1,
+              "w": 24,
+              "x": 0,
+              "y": 13
+            },
+            "id": 44,
+            "panels": [],
+            "title": "Frontend",
+            "type": "row"
+          },
+          {
+            "datasource": "github",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 13,
+              "x": 0,
+              "y": 14
+            },
+            "id": 36,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "owner": "$organization",
+                "queryType": "Releases",
+                "refId": "A",
+                "repository": "mino-mobile"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Frontend Releases",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "count"
+                  ]
+                }
+              }
+            ],
+            "transparent": true,
+            "type": "stat"
+          },
+          {
+            "datasource": "github",
+            "description": "",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 13,
+              "x": 0,
+              "y": 18
+            },
+            "id": 40,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "options": {
+                  "query": "base:develop is:merged",
+                  "timeField": 2
+                },
+                "owner": "$organization",
+                "queryType": "Pull_Requests",
+                "refId": "A",
+                "repository": "mino-mobile"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Pull Requests Merged",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "count"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          },
+          {
+            "datasource": "github",
+            "description": "",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "ms"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 7,
+              "x": 0,
+              "y": 22
+            },
+            "id": 42,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "options": {
+                  "query": "base:develop is:merged",
+                  "timeField": 2
+                },
+                "owner": "$organization",
+                "queryType": "Pull_Requests",
+                "refId": "A",
+                "repository": "mino-mobile"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "PR: Average Time in Integration",
+            "transformations": [
+              {
+                "id": "calculateField",
+                "options": {
+                  "mode": "reduceRow",
+                  "reduce": {
+                    "include": [
+                      "merged_at",
+                      "created_at"
+                    ],
+                    "reducer": "range"
+                  },
+                  "replaceFields": true
+                }
+              },
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "mean"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          },
+          {
+            "datasource": "github",
+            "description": "",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "ms"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 6,
+              "x": 7,
+              "y": 22
+            },
+            "id": 45,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "options": {
+                  "query": "base:master is:merged",
+                  "timeField": 2
+                },
+                "owner": "$organization",
+                "queryType": "Pull_Requests",
+                "refId": "A",
+                "repository": "mino-mobile"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Release: Average Time in QA",
+            "transformations": [
+              {
+                "id": "calculateField",
+                "options": {
+                  "mode": "reduceRow",
+                  "reduce": {
+                    "include": [
+                      "merged_at",
+                      "created_at"
+                    ],
+                    "reducer": "range"
+                  },
+                  "replaceFields": true
+                }
+              },
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "mean"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          },
+          {
+            "collapsed": false,
+            "datasource": null,
+            "gridPos": {
+              "h": 1,
+              "w": 24,
+              "x": 0,
+              "y": 26
+            },
+            "id": 31,
+            "panels": [],
+            "title": "Backend",
+            "type": "row"
+          },
+          {
+            "datasource": "github",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 13,
+              "x": 0,
+              "y": 27
+            },
+            "id": 9,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "owner": "$organization",
+                "queryType": "Releases",
+                "refId": "A",
+                "repository": "$repository"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Backend Releases",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "count"
+                  ]
+                }
+              }
+            ],
+            "transparent": true,
+            "type": "stat"
+          },
+          {
+            "datasource": "github",
+            "description": "",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 3,
+              "x": 0,
+              "y": 31
+            },
+            "id": 54,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "options": {
+                  "query": "is:merged label:\"release/int\"",
+                  "timeField": 2
+                },
+                "owner": "$organization",
+                "queryType": "Pull_Requests",
+                "refId": "A",
+                "repository": "$repository"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Dev -> Integration",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "count"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          },
+          {
+            "datasource": "github",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 3,
+              "x": 3,
+              "y": 31
+            },
+            "id": 29,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "options": {
+                  "query": "is:merged label:\"release/qa\"",
+                  "timeField": 2
+                },
+                "owner": "$organization",
+                "queryType": "Pull_Requests",
+                "refId": "A",
+                "repository": "$repository"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Integration -> QA",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "count"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          },
+          {
+            "datasource": "github",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 3,
+              "x": 6,
+              "y": 31
+            },
+            "id": 37,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "options": {
+                  "query": "label:\"release/milli-prod\" is:merged",
+                  "timeField": 2
+                },
+                "owner": "$organization",
+                "queryType": "Pull_Requests",
+                "refId": "A",
+                "repository": "$repository"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "QA -> Production (Standard)",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "count"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          },
+          {
+            "datasource": "github",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 4,
+              "x": 9,
+              "y": 31
+            },
+            "id": 53,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "options": {
+                  "query": "label:\"adhoc-release/prod\" is:merged",
+                  "timeField": 2
+                },
+                "owner": "$organization",
+                "queryType": "Pull_Requests",
+                "refId": "A",
+                "repository": "$repository"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "QA -> Production (Ad-hoc)",
+            "transformations": [
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "count"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          },
+          {
+            "datasource": "github",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "ms"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 3,
+              "x": 3,
+              "y": 35
+            },
+            "id": 38,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "options": {
+                  "query": "label:\"release/qa\" is:merged",
+                  "timeField": 2
+                },
+                "owner": "$organization",
+                "queryType": "Pull_Requests",
+                "refId": "A",
+                "repository": "$repository"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "PR: Average Time in Integration",
+            "transformations": [
+              {
+                "id": "calculateField",
+                "options": {
+                  "mode": "reduceRow",
+                  "reduce": {
+                    "include": [
+                      "merged_at",
+                      "created_at"
+                    ],
+                    "reducer": "range"
+                  },
+                  "replaceFields": true
+                }
+              },
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "mean"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          },
+          {
+            "datasource": "github",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "ms"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 3,
+              "x": 6,
+              "y": 35
+            },
+            "id": 39,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "options": {
+                  "query": "label:\"release/milli-prod\"",
+                  "timeField": 2
+                },
+                "owner": "$organization",
+                "queryType": "Pull_Requests",
+                "refId": "A",
+                "repository": "$repository"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Release: Average Time in QA (Standard)",
+            "transformations": [
+              {
+                "id": "calculateField",
+                "options": {
+                  "mode": "reduceRow",
+                  "reduce": {
+                    "include": [
+                      "merged_at",
+                      "created_at"
+                    ],
+                    "reducer": "range"
+                  },
+                  "replaceFields": true
+                }
+              },
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "mean"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          },
+          {
+            "datasource": "github",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "ms"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 4,
+              "w": 4,
+              "x": 9,
+              "y": 35
+            },
+            "id": 55,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "mean"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.4.3",
+            "targets": [
+              {
+                "options": {
+                  "query": "label:\"adhoc-release/prod\" is:merged",
+                  "timeField": 2
+                },
+                "owner": "$organization",
+                "queryType": "Pull_Requests",
+                "refId": "A",
+                "repository": "$repository"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Release: Average Time in QA (Ad-hoc)",
+            "transformations": [
+              {
+                "id": "calculateField",
+                "options": {
+                  "mode": "reduceRow",
+                  "reduce": {
+                    "include": [
+                      "merged_at",
+                      "created_at"
+                    ],
+                    "reducer": "range"
+                  },
+                  "replaceFields": true
+                }
+              },
+              {
+                "id": "reduce",
+                "options": {
+                  "reducers": [
+                    "mean"
+                  ]
+                }
+              }
+            ],
+            "type": "stat"
+          }
+        ],
+        "refresh": false,
+        "schemaVersion": 27,
+        "style": "dark",
+        "tags": [],
+        "templating": {
+          "list": [
+            {
+              "current": {
+                "selected": false,
+                "text": "gen6-ventures",
+                "value": "gen6-ventures"
+              },
+              "description": null,
+              "error": null,
+              "hide": 0,
+              "label": "Organization",
+              "name": "organization",
+              "options": [
+                {
+                  "selected": true,
+                  "text": "gen6-ventures",
+                  "value": "gen6-ventures"
+                }
+              ],
+              "query": "gen6-ventures",
+              "skipUrlSync": false,
+              "type": "textbox"
+            },
+            {
+              "description": null,
+              "error": null,
+              "hide": 2,
+              "label": "Repository",
+              "name": "repository",
+              "query": "infra",
+              "skipUrlSync": false,
+              "type": "constant"
+            }
+          ]
+        },
+        "time": {
+          "from": "now-30d",
+          "to": "now"
+        },
+        "timepicker": {
+          "refresh_intervals": [
+            "10s",
+            "30s",
+            "1m",
+            "5m",
+            "15m",
+            "30m",
+            "1h",
+            "2h",
+            "1d"
+          ]
+        },
+        "timezone": "",
+        "title": "Development Dashboard",
+        "uid": "Fx1zwLAPf",
+        "version": 1
+      }

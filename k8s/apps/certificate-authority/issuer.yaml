@@ -1,0 +1,7 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: milli-server
+spec:
+  ca:
+    secretName: milli-server-ca

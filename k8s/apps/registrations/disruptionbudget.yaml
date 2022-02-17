@@ -1,0 +1,10 @@
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: mino-registrations
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: mino-registrations

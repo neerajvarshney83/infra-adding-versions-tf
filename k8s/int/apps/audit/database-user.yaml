@@ -1,0 +1,10 @@
+---
+apiVersion: db.movetokube.com/v1alpha1
+kind: PostgresUser
+metadata:
+  name: audit-user
+spec:
+  role: audit
+  database: mino-audit
+  secretName: mino-db
+  privileges: OWNER 

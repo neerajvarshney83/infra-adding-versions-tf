@@ -1,0 +1,27 @@
+apiVersion: settings.k8s.io/v1alpha1
+kind: PodPreset
+metadata:
+  name: inject-db-config
+spec:
+  selector:
+    matchLabels:
+      db: "mino"
+  env:
+    - name: PGDATABASE
+      value: "mino"
+    - name: PGPORT
+      value: "5432"
+    - name: PGSSLMODE
+      value: "verify-full"
+    - name: PGSSLROOTCERT 
+      value: "/etc/ssl/db/AmazonRootCA1.pem"
+    - name: PGCONNECT_TIMEOUT
+      value: "5"
+  volumeMounts:
+    - mountPath: "/etc/ssl/db"
+      name: db-cert
+      readOnly: true
+  volumes:
+    - name: db-cert
+      secret:
+        secretName: rds-cert 

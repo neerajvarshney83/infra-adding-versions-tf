@@ -1,0 +1,128 @@
+apiVersion: v1
+data:
+  jmx-schema-registry-prometheus.yml: |
+    jmxUrl: service:jmx:rmi:///jndi/rmi://localhost:5555/jmxrmi
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    ssl: false
+    whitelistObjectNames:
+    - kafka.schema.registry:type=jetty-metrics
+    - kafka.schema.registry:type=master-slave-role
+    - kafka.schema.registry:type=jersey-metrics
+    rules:
+    - pattern : 'kafka.schema.registry<type=jetty-metrics>([^:]+):'
+      name: "cp_kafka_schema_registry_jetty_metrics_$1"
+    - pattern : 'kafka.schema.registry<type=master-slave-role>([^:]+):'
+      name: "cp_kafka_schema_registry_master_slave_role"
+    - pattern : 'kafka.schema.registry<type=jersey-metrics>([^:]+):'
+      name: "cp_kafka_schema_registry_jersey_metrics_$1"
+kind: ConfigMap
+metadata:
+  labels:
+    app: cp-schema-registry
+    chart: cp-schema-registry-0.1.0
+    heritage: Helm
+    release: platform
+  name: platform-cp-schema-registry-jmx-configmap
+  namespace: kafka
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cp-schema-registry
+    chart: cp-schema-registry-0.1.0
+    heritage: Helm
+    release: platform
+  name: platform-cp-schema-registry
+  namespace: kafka
+spec:
+  ports:
+  - name: schema-registry
+    port: 8081
+  selector:
+    app: cp-schema-registry
+    release: platform
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cp-schema-registry
+    chart: cp-schema-registry-0.1.0
+    heritage: Helm
+    release: platform
+  name: platform-cp-schema-registry
+  namespace: kafka
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cp-schema-registry
+      release: platform
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "5556"
+        prometheus.io/scrape: "true"
+      labels:
+        app: cp-schema-registry
+        release: platform
+    spec:
+      containers:
+      - command:
+        - java
+        - -XX:+UnlockExperimentalVMOptions
+        - -XX:+UseCGroupMemoryLimitForHeap
+        - -XX:MaxRAMFraction=1
+        - -XshowSettings:vm
+        - -jar
+        - jmx_prometheus_httpserver.jar
+        - "5556"
+        - /etc/jmx-schema-registry/jmx-schema-registry-prometheus.yml
+        image: solsson/kafka-prometheus-jmx-exporter@sha256:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
+        imagePullPolicy: IfNotPresent
+        name: prometheus-jmx-exporter
+        ports:
+        - containerPort: 5556
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/jmx-schema-registry
+          name: jmx-config
+      - env:
+        - name: SCHEMA_REGISTRY_HOST_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: SCHEMA_REGISTRY_LISTENERS
+          value: http://0.0.0.0:8081
+        - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
+          value: PLAINTEXT://cluster-kafka-bootstrap:9092
+        - name: SCHEMA_REGISTRY_KAFKASTORE_GROUP_ID
+          value: platform
+        - name: SCHEMA_REGISTRY_MASTER_ELIGIBILITY
+          value: "true"
+        - name: SCHEMA_REGISTRY_HEAP_OPTS
+          value: -Xms512M -Xmx512M
+        - name: JMX_PORT
+          value: "5555"
+        image: confluentinc/cp-schema-registry:5.5.0
+        imagePullPolicy: IfNotPresent
+        name: cp-schema-registry-server
+        ports:
+        - containerPort: 8081
+          name: schema-registry
+          protocol: TCP
+        - containerPort: 5555
+          name: jmx
+        resources:
+          limits:
+            cpu: 500m
+            memory: 768Mi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      volumes:
+      - configMap:
+          name: platform-cp-schema-registry-jmx-configmap
+        name: jmx-config

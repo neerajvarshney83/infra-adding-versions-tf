@@ -1,0 +1,23 @@
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+  namespace: cert-manager
+spec:
+  acme:
+    email: developers@gen6ventures.com 
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        ingress:
+          class: nginx-external
+    - selector:
+        matchLabels: 
+          internal: "true"
+      dns01:
+        route53:
+          region: us-east-1
+          hostedZoneID: Z0482885E50GAGQFJ96I 

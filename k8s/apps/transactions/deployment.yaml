@@ -1,0 +1,114 @@
+---
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: mino-transactions
+  labels:
+    app: mino-transactions
+    db: "mino"
+    auth: "okta"
+  annotations:
+    configmap.reloader.stakater.com/reload: "mino-transactions-env-vars,mino-transactions-category-mappings,mino-transactions-mcc-mappings"
+    secret.reloader.stakater.com/reload: "milli-server-tls,rds-cert,mino-transactions-marqeta-password,mino-transactions-mx-api-secret,mino-db-transactions-user,mino-transactions-client-credentials-secret"
+spec:
+  progressDeadlineSeconds: 140
+  selector:
+    matchLabels:
+      app: mino-transactions
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: mino-transactions
+        db: "mino"
+        auth: "okta"
+    spec:
+      containers:
+        - image: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-transactions:latest
+          name: mino-transactions
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mino-transactions-env-vars
+          env:
+            - name: MX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mino-transactions-mx-api-secret
+                  key: api-key
+            - name: MX_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-transactions-mx-api-secret
+                  key: client-id
+            - name: MARQETA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-transactions-marqeta-password
+                  key: password
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-db-transactions-user
+                  key: PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mino-db-transactions-user
+                  key: ROLE
+            - name: CLIENT_CREDENTIALS_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: mino-transactions-client-credentials-secret
+                  key: domain
+            - name: CLIENT_CREDENTIALS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-transactions-client-credentials-secret
+                  key: client-id
+            - name: CLIENT_CREDENTIALS_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mino-transactions-client-credentials-secret
+                  key: client-secret
+            - name: CLIENT_CREDENTIALS_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: mino-transactions-client-credentials-secret
+                  key: audience
+          ports:
+            - containerPort: 8443
+              name: https
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "768Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1536Mi"
+          volumeMounts:
+            - mountPath: /config/mino-transactions-category-mappings.yaml
+              subPath: mino-transactions-category-mappings.yaml
+              name: mino-transactions-category-mappings
+            - mountPath: /config/mino-transactions-mcc-mappings.yaml
+              subPath: mino-transactions-mcc-mappings.yaml
+              name: mino-transactions-mcc-mappings
+      volumes:
+        - name: mino-transactions-category-mappings
+          configMap:
+            name: mino-transactions-category-mappings
+        - name: mino-transactions-mcc-mappings
+          configMap:
+            name: mino-transactions-mcc-mappings

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mino-ops-ui-env-json
+data:
+  env.admin.json: |
+    {
+      "ADMIN_API_URL": "https://mino-api-staging.int.us-east-1.dev.gen6bk.com/admin-api/graphql",
+      "AUTH0_CLIENT_ID_OPS_UI": "ytR9iLjvh90BbniX3wQ5ijVmiHj59sEq",
+      "AUTH0_DOMAIN": "mino-staging.auth0.com",
+      "OKTA_ISSUER": "https://fnbo-customer.oktapreview.com/oauth2/default",
+      "OKTA_CLIENT_ID": "0oafadetfWO83X6cC1d6"
+    }

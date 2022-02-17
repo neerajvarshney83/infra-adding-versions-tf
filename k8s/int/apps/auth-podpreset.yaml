@@ -1,0 +1,19 @@
+apiVersion: settings.k8s.io/v1alpha1
+kind: PodPreset
+metadata:
+  name: inject-auth-config
+spec:
+  selector:
+    matchLabels:
+      auth: "okta"
+  env:
+    - name: ELEVEN-FS_SECURITY_MULTI-AUTH-SERVER_TRUSTED-AUTH-SERVERS_0_ISSUER-URI
+      value: "https://mino-staging.auth0.com/"
+    - name: ELEVEN-FS_SECURITY_MULTI-AUTH-SERVER_TRUSTED-AUTH-SERVERS_0_CLAIM-CONVERTER-TYPE
+      value: "AUTH0"
+    - name: ELEVEN-FS_SECURITY_MULTI-AUTH-SERVER_TRUSTED-AUTH-SERVERS_0_JWT_JWK-SET-URI
+      value: "https://assets.int.dev.gen6bk.com/jwks.json"
+    - name: ELEVEN-FS_SECURITY_MULTI-AUTH-SERVER_TRUSTED-AUTH-SERVERS_1_ISSUER-URI
+      value: "https://fnbo-customer.oktapreview.com/oauth2/default"
+    - name: ELEVEN-FS_SECURITY_MULTI-AUTH-SERVER_TRUSTED-AUTH-SERVERS_1_JWT_ISSUER-URI
+      value: "https://fnbo-customer.oktapreview.com/oauth2/default"

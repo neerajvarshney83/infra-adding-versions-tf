@@ -1,0 +1,183 @@
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: webhook-marqeta-transactions-batch-v1
+  namespace: kafka
+spec:
+  partitions: 12
+  replicas: 3
+  topicName: webhook-marqeta-transactions-batch-v1
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: webhook-marqeta-transactions-v1
+  namespace: kafka
+spec:
+  partitions: 12
+  replicas: 3
+  topicName: webhook-marqeta-transactions-v1
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: webhook-marqeta-system-transfer-transactions-v1
+  namespace: kafka
+spec:
+  partitions: 12
+  replicas: 3
+  topicName: webhook-marqeta-system-transfer-transactions-v1
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: assignment-topic-v1
+  namespace: kafka
+spec:
+  partitions: 36
+  replicas: 3
+  topicName: assignment-topic-v1
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: spending-transactions-v1
+  namespace: kafka
+spec:
+  partitions: 12
+  replicas: 3
+  topicName: spending-transactions-v1
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: spending-accounts-v2
+  namespace: kafka
+spec:
+  config:
+    cleanup.policy: compact
+    max.compaction.lag.ms: "3600000"
+  partitions: 12
+  replicas: 3
+  topicName: spending-accounts-v2
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: spending-accounts-v3
+  namespace: kafka
+spec:
+  config:
+    cleanup.policy: compact
+    max.compaction.lag.ms: "3600000"
+  partitions: 12
+  replicas: 3
+  topicName: spending-accounts-v3
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: savings-accounts-v1
+  namespace: kafka
+spec:
+  config:
+    cleanup.policy: compact
+    max.compaction.lag.ms: "3600000"
+  partitions: 12
+  replicas: 3
+  topicName: savings-accounts-v1
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: savings-accounts-v2
+  namespace: kafka
+spec:
+  config:
+    cleanup.policy: compact
+    max.compaction.lag.ms: "3600000"
+  partitions: 12
+  replicas: 3
+  topicName: savings-accounts-v2
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: linked-accounts-v1
+  namespace: kafka
+spec:
+  config:
+    cleanup.policy: compact
+    max.compaction.lag.ms: "3600000"
+  partitions: 12
+  replicas: 3
+  topicName: linked-accounts-v1
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: fnbo-webhook-transactions-v1
+  namespace: kafka
+spec:
+  partitions: 12
+  replicas: 3
+  topicName: fnbo-webhook-transactions-v1
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: audit-events-v1
+  namespace: kafka
+spec:
+  partitions: 12
+  replicas: 3
+  topicName: audit-events-v1
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: fnbo-webhook-kyc-v1
+  namespace: kafka
+spec:
+  partitions: 12
+  replicas: 3
+  topicName: fnbo-webhook-kyc-v1
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: cluster
+  name: push-notifications-v1
+  namespace: kafka
+spec:
+  partitions: 12
+  replicas: 3
+  topicName: push-notifications-v1
+

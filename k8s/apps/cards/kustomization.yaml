@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - disruptionbudget.yaml
+  - service.yaml
+  - service-monitor.yaml
+
+configMapGenerator:
+  - name: mino-cards-env-vars
+    literals:
+      - SWAGGER_ENABLED=false
+      - SENTRY_DSN=https://a852fb2d8b8a4a8084a14ce86aae594a@o257648.ingest.sentry.io/5208649
+      - MARQETA_CARD_PRODUCT_TOKEN=7831bd4c-8f63-4339-92cd-126e56d3edc9
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=cluster-kafka-bootstrap.kafka.svc.cluster.local:9092

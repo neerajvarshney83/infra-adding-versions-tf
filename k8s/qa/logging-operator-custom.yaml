@@ -1,0 +1,63 @@
+---
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterFlow
+metadata:
+  name: loki-flow
+  namespace: logging-operator
+spec:
+  match:
+    - select: {}
+  filters:
+    - tag_normaliser: {}
+    - record_modifier:
+        prepare_value: "require 'socket'; @hostname = Socket.gethostname"
+        records:
+        - logHost: "${@hostname}"
+    - parser:
+        key_name: log
+        reserve_time: true
+        reserve_data: true
+        remove_key_name_field: true
+        parse:
+          type: multi_format
+          patterns:
+          - format: json
+          - format: nginx
+          - format: syslog
+          - format: apache2
+  globalOutputRefs:
+    - loki-output
+    - s3-output 
+---
+kind: Logging
+apiVersion: logging.banzaicloud.io/v1beta1
+metadata:
+  name: default-log
+  namespace: logging-operator
+spec:
+  controlNamespace: logging-operator
+  enableRecreateWorkloadOnImmutableFieldChange: true
+  fluentbit:
+    filterKubernetes:
+      K8S-Logging.Parser: "On"
+    metrics:
+      serviceMonitor: true
+    resources:
+      limits:
+        cpu: 600m
+        memory: 1Gi
+      requests:
+        cpu: 200m
+        memory: 500M
+  fluentd:
+    metrics:
+      serviceMonitor: true
+    resources:
+      limits:
+        cpu: 600m
+        memory: 1Gi
+      requests:
+        cpu: 200m
+        memory: 500M
+    scaling:
+      replicas: 3

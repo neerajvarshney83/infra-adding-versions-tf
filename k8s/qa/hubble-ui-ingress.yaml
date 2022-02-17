@@ -1,0 +1,41 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hubble-ui
+  namespace: kube-system
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: "nginx-internal"
+    nginx.ingress.kubernetes.io/auth-url: "https://auth.qa.us-east-1.dev.gen6bk.com/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://auth.qa.us-east-1.dev.gen6bk.com/oauth2/start?rd=https%3A%2F%2F$host$request_uri"
+spec:
+  tls:
+    - hosts:
+        - hubble.qa.us-east-1.dev.gen6bk.com
+      secretName: hubble-tls-secret
+  rules:
+    - host: hubble.qa.us-east-1.dev.gen6bk.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: hubble-ui
+              servicePort: 80
+
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: hubble
+  namespace: eck
+  labels:
+    internal: "true"
+spec:
+  secretName: hubble-tls-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: hubble.qa.us-east-1.dev.gen6bk.com
+  dnsNames:
+    - hubble.qa.us-east-1.dev.gen6bk.com

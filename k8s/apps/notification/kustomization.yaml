@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - disruptionbudget.yaml
+  - service.yaml
+  - service-monitor.yaml
+
+configMapGenerator:
+  - name: mino-notification-env-vars
+    literals:
+      - SENTRY_DSN=https://0d15514b79554e59a6178d7e6de7a99a@o257648.ingest.sentry.io/2183905

@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - service-monitor.yaml
+  - service-account.yaml
+
+configMapGenerator:
+  - name: mino-api-tests-env-vars
+    literals:
+      - SWAGGER_ENABLED=false
+      - SENTRY_DSN=https://690c81f90d6349f4abf5fc4ea1151ece@o257648.ingest.sentry.io/5516641

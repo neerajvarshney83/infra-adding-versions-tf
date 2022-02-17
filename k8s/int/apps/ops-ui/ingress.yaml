@@ -1,0 +1,19 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: mino-ops-ui
+  annotations:
+    kubernetes.io/ingress.class: "nginx-external"
+spec:
+  tls:
+    - secretName: milli-ops-ui-tls
+      hosts: ["milli-ops-ui-int.dev.gen6bk.com"]
+  rules:
+    - host: milli-ops-ui-int.dev.gen6bk.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: mino-ops-ui
+              servicePort: http

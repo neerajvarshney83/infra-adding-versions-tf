@@ -1,0 +1,133 @@
+---
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: mino-test-capabilities
+  labels:
+    app: mino-test-capabilities
+    db: "mino"
+  annotations:
+    configmap.reloader.stakater.com/reload: "mino-test-capabilities-env-vars"
+    secret.reloader.stakater.com/reload: "milli-server-tls,rds-cert,mino-test-capabilities-marqeta-password,mino-db-test-capabilities,mino-test-capabilities-plaid-api,mino-test-capabilities-api-password,mino-test-capabilities-client-credentials-secret,mino-test-capabilities-mino-tools-client-credentials-secret,mino-test-capabilities-jwt-signing-key-secret,mino-test-capabilities-jwe-secret-key,mino-test-capabilities-iv-secret-key,mino-test-capabilities-webhook-fnbo-secret"
+spec:
+  progressDeadlineSeconds: 140
+  selector:
+    matchLabels:
+      app: mino-test-capabilities
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: mino-test-capabilities
+        db: "mino"
+    spec:
+      containers:
+        - image: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-test-capabilities:latest
+          name: mino-test-capabilities
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mino-test-capabilities-env-vars
+          env:
+            - name: MARQETA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-marqeta-password
+                  key: password
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-db-test-capabilities
+                  key: PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mino-db-test-capabilities
+                  key: ROLE
+            - name: PLAID_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-plaid-api
+                  key: client-id
+            - name: PLAID_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-plaid-api
+                  key: secret
+            - name: PLAID_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-plaid-api
+                  key: public-key
+            - name: API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-api-password
+                  key: password
+            - name: CLIENT_CREDENTIALS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-client-credentials-secret
+                  key: client-id
+            - name: CLIENT_CREDENTIALS_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-client-credentials-secret
+                  key: client-secret
+            - name: AUTH0_TOOLS_API_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-mino-tools-client-credentials-secret
+                  key: client-id
+            - name: AUTH0_TOOLS_API_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-mino-tools-client-credentials-secret
+                  key: client-secret
+            - name: JWT_SIGNING_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-jwt-signing-key-secret
+                  key: private-key
+            - name: REGISTRATION_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-jwe-secret-key
+                  key: jwe-secret-key
+            - name: REGISTRATION_IV_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-iv-secret-key
+                  key: iv-secret-key
+            - name: FNBO_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-webhook-fnbo-secret
+                  key: secret
+          ports:
+            - containerPort: 8443
+              name: https
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "125m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1024Mi"

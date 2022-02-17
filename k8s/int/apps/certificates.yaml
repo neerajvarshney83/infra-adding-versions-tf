@@ -1,0 +1,40 @@
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: mino-api
+spec:
+  secretName: mino-api-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: mino-api-staging.int.us-east-1.dev.gen6bk.com
+  dnsNames:
+    - mino-api-staging.int.us-east-1.dev.gen6bk.com
+    - mino-api-int.dev.gen6bk.com
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: milli-ops-ui
+spec:
+  secretName: milli-ops-ui-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: milli-ops-ui-int.dev.gen6bk.com
+  dnsNames:
+    - milli-ops-ui-int.dev.gen6bk.com
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: mino-helios
+spec:
+  secretName: mino-helios-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: mino-helios-int.dev.gen6bk.com
+  dnsNames:
+    - mino-helios-int.dev.gen6bk.com

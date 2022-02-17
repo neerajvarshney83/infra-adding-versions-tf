@@ -1,0 +1,51 @@
+---
+apiVersion: extensions/v1beta1 
+kind: Ingress
+metadata:
+  name: jaeger-ui
+  namespace: jaeger
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: nginx-internal
+    nginx.ingress.kubernetes.io/auth-url: "https://auth.us-east-1.prod.milli-bank.com/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://auth.us-east-1.prod.milli-bank.com/oauth2/start?rd=https%3A%2F%2F$host$request_uri"
+spec:
+  tls:
+  - hosts:
+    - jaeger.us-east-1.prod.milli-bank.com
+    secretName: jaeger-tls
+  rules:
+  - host: jaeger.us-east-1.prod.milli-bank.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: stream-query
+          servicePort: 16686
+
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: jaeger
+  namespace: jaeger
+  labels:
+    internal: "true"
+spec:
+  secretName: jaeger-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: jaeger.us-east-1.prod.milli-bank.com
+  dnsNames:
+    - jaeger.us-east-1.prod.milli-bank.com
+---
+apiVersion: 'kubernetes-client.io/v1'
+kind: ExternalSecret
+metadata:
+  name: jaeger-es-secret 
+  namespace: jaeger
+secretDescriptor:
+  backendType: secretsManager
+  dataFrom:
+    - jaeger-es-secret-prod

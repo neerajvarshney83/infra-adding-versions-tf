@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mino-plaid-mock
+spec:
+  selector:
+    matchLabels:
+      app: mino-plaid-mock
+  endpoints:
+    - port: http-actuator
+      path: '/actuator/prometheus'
+      interval: 10s
+      honorLabels: true

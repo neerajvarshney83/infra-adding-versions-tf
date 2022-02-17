@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mino-disclosures
+  labels:
+    app: mino-disclosures
+    discoverable-swagger: enabled
+spec:
+  ports:
+    - port: 8443
+      name: https
+    - port: 8081
+      name: http-actuator
+  selector:
+    app: mino-disclosures
+  type: ClusterIP

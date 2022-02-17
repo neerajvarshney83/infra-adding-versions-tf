@@ -1,0 +1,102 @@
+# CPU throttles sometimes, the alert is quite sensitive but we don't need to be notified immediately. This can be spot checked.
+apiVersion: monitoring.giantswarm.io/v1alpha1
+kind: Silence
+metadata:
+  name: cputhrottlinghigh
+spec:
+  targetTags:
+  - name: installation
+    value: kind
+  - name: provider
+    value: local
+  matchers:
+  - name: alertname
+    value: CPUThrottlingHigh
+    isRegex: false
+  - name: container
+    value: node-exporter
+    isRegex: false
+  - name: prometheus
+    value: monitoring/k8s
+    isRegex: false
+  - name: namespace
+    value: monitoring
+    isRegex: false
+  - name: severity
+    value: info
+    isRegex: false
+---
+# Google are good at managing their own certificates, we don't care if they take some time to rotate them
+apiVersion: monitoring.giantswarm.io/v1alpha1
+kind: Silence
+metadata:
+  name: sslcertificategoogle
+spec:
+  targetTags:
+  - name: installation
+    value: kind
+  - name: provider
+    value: local
+  matchers:
+  - name: environment
+    value: prometheus.io
+    isRegex: false
+  - name: instance
+    value: https://www.google.com
+    isRegex: false
+  - name: prometheus
+    value: monitoring/k8s
+    isRegex: false
+  - name: severity
+    value: warning
+    isRegex: false
+---
+# Certificate rotation is handled automatically within the cluster, this doesn't indicate a problem
+apiVersion: monitoring.giantswarm.io/v1alpha1
+kind: Silence
+metadata:
+  name: apiserversslexpire
+spec:
+  targetTags:
+  - name: installation
+    value: kind
+  - name: provider
+    value: local
+  matchers:
+  - name: alertname
+    value: KubeClientCertificateExpiration
+    isRegex: false
+  - name: job
+    value: apiserver
+    isRegex: false
+  - name: service
+    value: kubernetes
+    isRegex: false
+  - name: endpoint
+    value: https
+    isRegex: false
+---
+# This can be spot-checked and is usually caused by small amounts of latency
+apiVersion: monitoring.giantswarm.io/v1alpha1
+kind: Silence
+metadata:
+  name: outofordertimestamps
+spec:
+  targetTags:
+  - name: installation
+    value: kind
+  - name: provider
+    value: local
+  matchers:
+  - name: alertname
+    value: PrometheusOutOfOrderTimestamps
+    isRegex: false
+  - name: job
+    value: prometheus-k8s
+    isRegex: false
+  - name: service
+    value: prometheus-k8s
+    isRegex: false
+  - name: endpoint
+    value: web
+    isRegex: false

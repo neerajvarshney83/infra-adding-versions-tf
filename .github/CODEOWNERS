@@ -1,0 +1,9 @@
+* @gen6-ventures/platform
+/k8s/dev/ @gen6-ventures/back-end
+/k8s/int/ @gen6-ventures/back-end
+/k8s/qa/ @gen6-ventures/qa
+/k8s/apps/ @gen6-ventures/back-end
+/k8s/milli-prod/ @gen6-ventures/qa @gen6-ventures/back-end
+/terraform/dev/ @gen6-ventures/back-end
+/terraform/production/ @gen6-ventures/qa @gen6-ventures/development-leads
+/k8s/base/grafana-reporting-dashboards.yaml @gen6-ventures/back-end

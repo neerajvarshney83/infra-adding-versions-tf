@@ -1,0 +1,182 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-api-tests
+  namespace: monitoring
+data:
+  development.json: |
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": "-- Grafana --",
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "editable": true,
+      "gnetId": null,
+      "graphTooltip": 0,
+      "id": 39,
+      "links": [],
+      "panels": [
+        {
+          "cards": {
+            "cardHSpacing": 1,
+            "cardMinWidth": 10,
+            "cardRound": null,
+            "cardVSpacing": 1
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateGnYlRd",
+            "defaultColor": "#757575",
+            "exponent": 0.5,
+            "mode": "discrete",
+            "thresholds": [
+              {
+                "color": "#F2495C",
+                "tooltip": "Fail",
+                "value": "0"
+              },
+              {
+                "color": "#73BF69",
+                "tooltip": "Pass",
+                "value": "1"
+              }
+            ]
+          },
+          "datasource": "reporting",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 26,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "highlightCards": true,
+          "id": 2,
+          "legend": {
+            "show": true
+          },
+          "nullPointMode": "as empty",
+          "pageSize": 15,
+          "pluginVersion": "7.4.3",
+          "seriesFilterIndex": -1,
+          "statusmap": {
+            "ConfigVersion": "v1"
+          },
+          "targets": [
+            {
+              "format": "time_series",
+              "group": [],
+              "metricColumn": "none",
+              "queryType": "randomWalk",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  $__timeGroupAlias(finished_at,$__interval),\n  test_case_name AS metric,\n  min(CASE(test_case_status::text) WHEN '\"SUCCESS\"' THEN 1 ELSE 0 end) AS status\nFROM\n  reporting.api_tests_result\nWHERE\n  $__timeFilter(finished_at) AND test_case_status::text='\"SUCCESS\"'\nGROUP BY 1,2\nORDER BY $__timeGroup(finished_at,$__interval)\n",
+              "refId": "A",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "time",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [],
+                  "type": "macro"
+                }
+              ]
+            },
+            {
+              "format": "time_series",
+              "group": [],
+              "hide": false,
+              "metricColumn": "none",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  $__timeGroupAlias(finished_at,$__interval),\n  test_case_name AS metric,\n  min(CASE(test_case_status::text) WHEN '\"FAILED\"' THEN 0 ELSE 1 end) AS status\nFROM\n  reporting.api_tests_result\nWHERE\n  $__timeFilter(finished_at) AND test_case_status::text='\"FAILED\"'\nGROUP BY 1,2\nORDER BY $__timeGroup(finished_at,$__interval)\n",
+              "refId": "B",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "column"
+                  }
+                ]
+              ],
+              "timeColumn": "time",
+              "where": [
+                {
+                  "name": "$__timeFilter",
+                  "params": [],
+                  "type": "macro"
+                }
+              ]
+            }
+          ],
+          "title": "API test cases status",
+          "tooltip": {
+            "extraInfo": "",
+            "freezeOnClick": true,
+            "items": [],
+            "show": true,
+            "showExtraInfo": false,
+            "showItems": false
+          },
+          "transformations": [],
+          "type": "flant-statusmap-panel",
+          "useMax": true,
+          "usingPagination": false,
+          "xAxis": {
+            "show": true
+          },
+          "yAxis": {
+            "maxWidth": -1,
+            "minWidth": -1,
+            "show": true
+          },
+          "yAxisSort": "a → z",
+          "yLabel": {
+            "delimiter": "",
+            "labelTemplate": "",
+            "usingSplitLabel": false
+          }
+        }
+      ],
+      "schemaVersion": 27,
+      "style": "dark",
+      "tags": [],
+      "templating": {
+        "list": []
+      },
+      "time": {
+        "from": "now-12h",
+        "to": "now"
+      },
+      "timepicker": {},
+      "timezone": "",
+      "title": "API tests",
+      "uid": "KKIzAMWnz",
+      "version": 3
+    }

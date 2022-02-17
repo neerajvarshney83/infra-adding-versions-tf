@@ -1,0 +1,10 @@
+---
+apiVersion: db.movetokube.com/v1alpha1
+kind: PostgresUser
+metadata:
+  name: onboarding-user
+spec:
+  role: onboarding
+  database: mino-onboarding
+  secretName: mino-db
+  privileges: OWNER 

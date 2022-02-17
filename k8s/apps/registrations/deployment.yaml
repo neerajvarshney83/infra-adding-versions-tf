@@ -1,0 +1,160 @@
+---
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: mino-registrations
+  labels:
+    app: mino-registrations
+    auth: "okta"
+  annotations:
+    configmap.reloader.stakater.com/reload: "mino-registrations-env-vars"
+    secret.reloader.stakater.com/reload: "mino-registrations-apns-cert,milli-server-tls,mino-registrations-apns-secret,mino-registrations-client-credentials-secret,mino-registrations-jwe-secret-key-v1,mino-registrations-fcm-service-account,mino-registrations-iv-secret-key"
+spec:
+  progressDeadlineSeconds: 140
+  selector:
+    matchLabels:
+      app: mino-registrations
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: mino-registrations
+        auth: "okta"
+    spec:
+      containers:
+        - image: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-registrations:latest
+          name: mino-registrations
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mino-registrations-env-vars
+          env:
+            - name: APNS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-apns-secret
+                  key: key-id
+            - name: APNS_TEAM_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-apns-secret
+                  key: team-id
+            - name: APNS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-apns-secret
+                  key: key
+            - name: GEN6_REGISTRATIONS_APNS_CA_CERTIFICATE
+              value: |
+                -----BEGIN CERTIFICATE-----
+                MIIEMjCCAxqgAwIBAgIBATANBgkqhkiG9w0BAQUFADB7MQswCQYDVQQGEwJHQjEb
+                MBkGA1UECAwSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHDAdTYWxmb3JkMRow
+                GAYDVQQKDBFDb21vZG8gQ0EgTGltaXRlZDEhMB8GA1UEAwwYQUFBIENlcnRpZmlj
+                YXRlIFNlcnZpY2VzMB4XDTA0MDEwMTAwMDAwMFoXDTI4MTIzMTIzNTk1OVowezEL
+                MAkGA1UEBhMCR0IxGzAZBgNVBAgMEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
+                BwwHU2FsZm9yZDEaMBgGA1UECgwRQ29tb2RvIENBIExpbWl0ZWQxITAfBgNVBAMM
+                GEFBQSBDZXJ0aWZpY2F0ZSBTZXJ2aWNlczCCASIwDQYJKoZIhvcNAQEBBQADggEP
+                ADCCAQoCggEBAL5AnfRu4ep2hxxNRUSOvkbIgwadwSr+GB+O5AL686tdUIoWMQua
+                BtDFcCLNSS1UY8y2bmhGC1Pqy0wkwLxyTurxFa70VJoSCsN6sjNg4tqJVfMiWPPe
+                3M/vg4aijJRPn2jymJBGhCfHdr/jzDUsi14HZGWCwEiwqJH5YZ92IFCokcdmtet4
+                YgNW8IoaE+oxox6gmf049vYnMlhvB/VruPsUK6+3qszWY19zjNoFmag4qMsXeDZR
+                rOme9Hg6jc8P2ULimAyrL58OAd7vn5lJ8S3frHRNG5i1R8XlKdH5kBjHYpy+g8cm
+                ez6KJcfA3Z3mNWgQIJ2P2N7Sw4ScDV7oL8kCAwEAAaOBwDCBvTAdBgNVHQ4EFgQU
+                oBEKIz6W8Qfs4q8p74Klf9AwpLQwDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQF
+                MAMBAf8wewYDVR0fBHQwcjA4oDagNIYyaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+                QUFBQ2VydGlmaWNhdGVTZXJ2aWNlcy5jcmwwNqA0oDKGMGh0dHA6Ly9jcmwuY29t
+                b2RvLm5ldC9BQUFDZXJ0aWZpY2F0ZVNlcnZpY2VzLmNybDANBgkqhkiG9w0BAQUF
+                AAOCAQEACFb8AvCb6P+k+tZ7xkSAzk/ExfYAWMymtrwUSWgEdujm7l3sAg9g1o1Q
+                GE8mTgHj5rCl7r+8dFRBv/38ErjHT1r0iWAFf2C3BUrz9vHCv8S5dIa2LX1rzNLz
+                Rt0vxuBqw8M0Ayx9lt1awg6nCpnBBYurDC/zXDrPbDdVCYfeU0BsWO/8tqtlbgT2
+                G9w84FoVxp7Z8VlIMCFlA2zs6SFz7JsDoeA3raAVGI/6ugLOpyypEBMs1OUIJqsi
+                l2D4kF501KKaU73yqWjgom7C12yxow+ev+to51byrvLjKzg6CYG1a4XXvi3tPxq3
+                smPi9WIsgtRqAEFQ8TmDn5XpNpaYbg==
+                -----END CERTIFICATE-----
+            - name: GEN6_REGISTRATIONS_JWE_CONFIG_KEYS_0_HEX_ENCODED_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-jwe-secret-key-v1
+                  key: jwe-secret-key
+            - name: CLIENT_CREDENTIALS_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-client-credentials-secret
+                  key: domain
+            - name: CLIENT_CREDENTIALS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-client-credentials-secret
+                  key: client-id
+            - name: CLIENT_CREDENTIALS_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-client-credentials-secret
+                  key: client-secret
+            - name: CLIENT_CREDENTIALS_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-client-credentials-secret
+                  key: audience
+            - name: GEN6_REGISTRATIONS_IV_HEX_ENCODED_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-iv-secret-key
+                  key: iv-secret-key
+            - name: FCM_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-fcm-service-account
+                  key: project_id
+            - name: FCM_SERVICE_ACCOUNT_PRIVATE_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-fcm-service-account
+                  key: private_key_id
+            - name: FCM_SERVICE_ACCOUNT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-fcm-service-account
+                  key: private_key
+            - name: FCM_SERVICE_ACCOUNT_CLIENT_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-fcm-service-account
+                  key: client_email
+            - name: FCM_SERVICE_ACCOUNT_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-fcm-service-account
+                  key: client_id
+            - name: FCM_SERVICE_ACCOUNT_CLIENT_X509_CERT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: mino-registrations-fcm-service-account
+                  key: client_x509_cert_url
+          ports:
+            - containerPort: 8443
+              name: https
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "125m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1024Mi"

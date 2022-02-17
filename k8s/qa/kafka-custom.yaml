@@ -1,0 +1,38 @@
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: Kafka
+metadata:
+  name: cluster
+  namespace: kafka
+spec:
+  kafkaExporter: {}
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+  kafka:
+    config:
+      log.message.format.version: "2.5"
+      offsets.topic.replication.factor: 3
+      transaction.state.log.min.isr: 2
+      transaction.state.log.replication.factor: 3
+      auto.create.topics.enable: false
+    listeners:
+      plain: {}
+      tls: {}
+    replicas: 3
+    storage:
+      type: jbod
+      volumes:
+      - deleteClaim: false
+        id: 0
+        size: 15Gi
+        class: stable
+        type: persistent-claim
+    version: 2.5.0
+  zookeeper:
+    replicas: 3
+    storage:
+      deleteClaim: false
+      size: 15Gi
+      class: stable 
+      type: persistent-claim

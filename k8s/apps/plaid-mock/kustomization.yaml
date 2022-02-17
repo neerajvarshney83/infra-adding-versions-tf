@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - disruptionbudget.yaml
+  - service.yaml
+  - service-monitor.yaml
+
+configMapGenerator:
+  - name: mino-plaid-mock-env-vars
+    literals:
+      - SWAGGER_ENABLED=false
+      - SENTRY_DSN=https://fc0a16e99c1f4a64a7d2b51ff29d0504@o257648.ingest.sentry.io/5890551

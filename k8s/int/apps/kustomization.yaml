@@ -1,0 +1,410 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: int
+bases:
+- ../../apps/accounts
+- ../../apps/admin-gateway
+- ../../apps/api-gateway
+- ../../apps/api-tests
+- ../../apps/cards
+- ../../apps/certificate-authority
+- ../../apps/disclosures
+- ../../apps/identity
+- ../../apps/insights
+- ../../apps/kyc
+- ../../apps/notification
+- ../../apps/onboarding
+- ../../apps/ops-ui
+- ../../apps/helios
+- ../../apps/rds
+- ../../apps/registrations
+- ../../apps/reporting
+- ../../apps/test-capabilities
+- ../../apps/transactions
+- ../../apps/transfer-rules
+- ../../apps/webhooks
+- ../../apps/audit
+- ../../apps/plaid-mock
+
+resources:
+- namespace-podpreset.yaml
+- auth-podpreset.yaml
+- certificates.yaml
+- monitoring.yaml
+- accounts/ingress.yaml
+- accounts/secrets.yaml
+- accounts/database.yaml
+- accounts/database-user.yaml
+- audit/ingress.yaml
+- audit/database.yaml
+- audit/database-user.yaml
+- admin-gateway/ingress.yaml
+- admin-gateway/secrets.yaml
+- api-gateway/ingress.yaml
+- api-tests/ingress.yaml
+- api-tests/secrets.yaml
+- api-gateway/secrets.yaml
+- cards/database.yaml
+- cards/database-user.yaml
+- cards/ingress.yaml
+- cards/secrets.yaml
+- certificate-authority/certificate.yaml
+- certificate-authority/secret.yaml
+- disclosures/ingress.yaml
+- disclosures/secrets.yaml
+- disclosures/database.yaml
+- disclosures/database-user.yaml
+- identity/ingress.yaml
+- identity/secrets.yaml
+- identity/database.yaml
+- identity/database-user.yaml
+- insights/ingress.yaml
+- insights/secrets.yaml
+- kyc/ingress.yaml
+- kyc/secrets.yaml
+- onboarding/ingress.yaml
+- onboarding/secrets.yaml
+- onboarding/database.yaml
+- onboarding/database-user.yaml
+- plaid-mock/ingress.yaml
+- plaid-mock/secrets.yaml
+- ops-ui/ingress.yaml
+- ops-ui/config.yaml
+- helios/ingress.yaml
+- helios/secrets.yaml
+- test-capabilities/database.yaml
+- test-capabilities/database-user.yaml
+- test-capabilities/ingress.yaml
+- test-capabilities/secrets.yaml
+- transactions/ingress.yaml
+- transactions/secrets.yaml
+- transactions/database.yaml
+- transactions/database-user.yaml
+- webhooks/ingress.yaml
+- webhooks/secrets.yaml
+- registrations/ingress.yaml
+- registrations/secrets.yaml
+- reporting/secrets.yaml
+- transfer-rules/ingress.yaml
+- transfer-rules/secrets.yaml
+- notification/ingress.yaml
+- notification/secrets.yaml
+- external-services.yaml
+
+patchesStrategicMerge:
+- accounts/deployment.yaml
+- audit/deployment.yaml
+- admin-gateway/deployment.yaml
+- api-gateway/deployment.yaml
+- api-tests/deployment.yaml
+- cards/deployment.yaml
+- disclosures/deployment.yaml
+- identity/deployment.yaml
+- insights/deployment.yaml
+- kyc/deployment.yaml
+- notification/deployment.yaml
+- onboarding/deployment.yaml
+- ops-ui/deployment.yaml
+- reporting/deployment.yaml
+- test-capabilities/deployment.yaml
+- transactions/deployment.yaml
+- webhooks/deployment.yaml
+- transfer-rules/deployment.yaml
+- registrations/deployment.yaml
+- plaid-mock/deployment.yaml
+
+patchesJson6902:
+  - target:
+      group: settings.k8s.io
+      version: v1alpha1
+      kind: PodPreset
+      name: inject-db-config
+    patch: |-
+      - op: add
+        path: "/spec/env/-"
+        value:
+          name: PGHOST
+          value: "int-us-east-1.cluster-cbjq3tjwvqw1.us-east-1.rds.amazonaws.com"
+
+configMapGenerator:
+- behavior: merge
+  literals:
+  - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+  - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+  - AUTH0_MGMT_API_DOMAIN=mino-staging.auth0.com
+  - SWAGGER_ENABLED=false
+  - SENTRY_ENVIRONMENT=int
+  - POSTGRES_HOST=mino-postgres
+  name: mino-disclosures-env-vars
+- behavior: merge
+  literals:
+  - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+  - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+  - MARQETA_URL=https://11fs-dev.marqeta.com/v3/
+  - MARQETA_SPENDING_ACCOUNT_HOLDER_GROUP=always_kyc_required
+  - MARQETA_USERNAME=11fs_sandbox_api_consumer
+  - MARQETA_REQUEST_LOG_LEVEL=BODY
+  - SWAGGER_ENABLED=false
+  - SENTRY_ENVIRONMENT=int
+  - PLAID_URL=https://mino-api-staging.int.us-east-1.dev.gen6bk.com/plaid-mock/v1/
+  - PLAID_REQUEST_LOG_LEVEL=BODY
+  - PLAID_HTTP_READ_TIMEOUT=25s
+  - MARQETA_HTTP_READ_TIMEOUT=20s
+  - FNBO_ACCOUNTS_URL=https://api.dev.fnbo.io/
+# - FNBO_ACCOUNTS_URL=https://api.staging.fnbo.io/
+  - FNBO_VERIFICATION_TIER_1_DURATION=1m
+  - FNBO_VERIFICATION_TIER_2_DURATION=3m
+  - FNBO_LOG_BLOCKED_AS_ERROR=false
+  - PLAID_LINK_CUSTOMIZATION_NAME=staging
+  - PLAID_REDIRECT_URI=https://links.int.dev.gen6bk.com/
+  - SPRING_PROFILES_ACTIVE=int
+  name: mino-accounts-env-vars
+- behavior: merge
+  literals:
+  - APP_LOGGING_LEVEL=debug
+  - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+  - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+  - SENTRY_ENVIRONMENT=int
+  - GRAPHQL_PLAYGROUND_ENABLED=true
+  - GRAPHQL_SDL_ENABLED=true
+  - GRAPHQL_INTROSPECTION_ENABLED=true
+  - GEN6_ADMIN_API_CORS_ALLOWED-REGEX-ORIGINS_0="https://milli-ops-ui-int\.dev\.gen6bk\.com"
+  - GEN6_ADMIN_API_CORS_ALLOWED-REGEX-ORIGINS_1="http://localhost:1234"
+  - GEN6_ADMIN_API_CORS_ALLOWED-REGEX-ORIGINS_2="http://localhost:4000"
+  - GEN6_ADMIN_API_CORS_ALLOWED-REGEX-ORIGINS_3="https://localhost:3000"
+  - GEN6_ADMIN_API_CORS_ALLOWED-REGEX-ORIGINS_4="https://mino-helios-int.dev.gen6bk.com"
+  - FNBO_ACCOUNTS_URL=https://api.dev.fnbo.io/
+  - ADDRESS_API_BASE_URL=https://api.dev.fnbo.io/
+  name: mino-admin-gateway-env-vars
+- behavior: merge
+  literals:
+  - APP_LOGGING_LEVEL=debug
+  - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+  - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+  - SENTRY_ENVIRONMENT=int
+  - GRAPHQL_PLAYGROUND_ENABLED=true
+  - GRAPHQL_SDL_ENABLED=true
+  - GRAPHQL_INTROSPECTION_ENABLED=true
+  - REGISTRATION_ALLOWED_CORS_ORIGINS="*"
+  - ACCOUNTS_HTTP_READ_TIMEOUT=30s
+  - APP_VERSION_COMPATIBILITY_ENVIRONMENT=int
+  - APP_VERSION_COMPATIBILITY_URL=https://gen6-app-version.s3.amazonaws.com/
+  - TWILIO_ACCOUNT_SERVICE_ID=AC6c862a31d337562432d6bd78b2694432
+  - TWILIO_SERVICE_ID=IS20634a53a1cf25e61fc44ae45f775bb8
+  - FILTER_TRACE_REQUEST_HEADERS=false
+  - ADDRESS_API_BASE_URL=https://api.dev.fnbo.io/
+  name: mino-api-gateway-env-vars
+- behavior: merge
+  literals:
+    - APP_LOGGING_LEVEL=info
+    - SENTRY_ENVIRONMENT=int
+    - MINO_API_BASE_URL=https://mino-api-staging.int.us-east-1.dev.gen6bk.com
+    - SLACK_ENABLED=true
+    - GEN6_API_TESTS_SCHEDULE_ENABLED=true
+    - GEN6_API_TESTS_SCHEDULE_EXECUTE_FREQUENCY=PT3H
+    - GEN6_API_TESTS_SCHEDULE_CHECK_FREQUENCY=PT1M
+  name: mino-api-tests-env-vars
+- behavior: merge
+  literals:
+  - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+  - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+  - AUTH0_MGMT_API_DOMAIN=mino-staging.auth0.com
+  - SWAGGER_ENABLED=false
+  - SENTRY_ENVIRONMENT=int
+  - POSTGRES_HOST=mino-postgres
+  - OKTA_ENABLED=true
+  - OKTA_MATCH_REGEX=".+okta.+"
+  - OKTA_MILLI_APP_ID=0oaiz6tcrkXZPsQYm1d6
+  - OKTA_MILLI_GROUP_ID=00gf2kly8rKqPIDef1d6
+  - OKTA_API_URL=https://fnbo-customer.oktapreview.com
+  - FNBO_CUSTOMER_API_URL=https://api.dev.fnbo.io/
+# - FNBO_CUSTOMER_API_URL=https://api.staging.fnbo.io/
+  name: mino-identity-env-vars
+- behavior: merge
+  literals:
+  - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+  - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+  - SWAGGER_ENABLED=false
+  - SENTRY_ENVIRONMENT=int
+  - MARQETA_URL=https://11fs-dev.marqeta.com/
+  - MARQETA_USERNAME=11fs_sandbox_api_consumer
+  - MARQETA_APP_TOKEN=11fs_sandbox
+  - CARD_ACTIVATION_BACK_OFF_TIER_1_RATE_LIMIT_DURATION=1m
+  - CARD_ACTIVATION_BACK_OFF_TIER_2_RATE_LIMIT_DURATION=3m
+  - LOG_CARD_ACTIVATION_BLOCKED_AS_ERROR=false
+  - GEN6_CARDS_MARQETA_CLIENT_HTTP_TIMEOUTS_READ-TIMEOUT=20s
+  - FNBO_ACCOUNTS_URL=https://api.dev.fnbo.io/
+  name: mino-cards-env-vars
+- behavior: merge
+  literals:
+    - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+    - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+    - AUTH0_MANAGEMENT_API_URL=https://fnbo-dev.us.auth0.com/api/v2/
+    - SWAGGER_ENABLED=false
+    - SENTRY_ENVIRONMENT=int
+    - POSTGRES_HOST=mino-postgres
+    - POSTGRES_DATABASE=mino
+    - ITUNES_BETA_TEST_GROUP_ID=744407f1-b742-4491-911b-1485ea0018df
+    - FNBO_ENABLED=true
+    - FNBO_KYC_ENABLED=true
+    - ACCOUNTS_BACKOFF_PERIOD=2s
+    - ACCOUNTS_RETRIES=5
+    - OFFBOARDING_VALIDATION_AS_ERROR=false
+    - VERIFICATION_SERVICE=mino-test-capabilities
+    - SPRING_KAFKA_BOOTSTRAP_SERVERS=cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+    - SPRING_KAFKA_TOPIC_DEFAULTS_PARTITION_COUNT=12
+    - SPRING_KAFKA_TOPIC_DEFAULTS_REPLICATION_FACTOR=3
+  name: mino-onboarding-env-vars
+- behavior: merge
+  literals:
+    - CSP_WHITELISTED_DOMAINS="https://mino-staging.auth0.com https://mino-api-staging.int.us-east-1.dev.gen6bk.com https://fnbo-customer.oktapreview.com"
+  name: mino-ops-ui-env-vars
+- behavior: merge
+  name: mino-helios-env-vars
+  literals:
+    - CSP_WHITELISTED_DOMAINS="https://mino-staging.auth0.com https://mino-api-staging.int.us-east-1.dev.gen6bk.com https://mino-helios-int.dev.gen6bk.com"
+    - ADMIN_API_URL=https://mino-api-staging.int.us-east-1.dev.gen6bk.com/admin-api/graphql
+    - AUTH0_BASE_URL=https://mino-helios-int.dev.gen6bk.com
+    - AUTH0_ISSUER_BASE_URL=https://mino-staging.auth0.com
+    - AUTH0_CLIENT_ID=ytR9iLjvh90BbniX3wQ5ijVmiHj59sEq
+    - SENTRY_ORG=gen6
+    - SENTRY_PROJECT=mino-helios
+    - SENTRY_URL=https://sentry.io/
+- behavior: merge
+  literals:
+    - SENTRY_ENVIRONMENT=int
+    - SWAGGER_ENABLED=false
+    - MARQETA_USER_NAME=11fs_sandbox_api_consumer
+    - MARQETA_URL=https://11fs-dev.marqeta.com/v3/
+    - AUTH0_JWK_URL=https://mino-staging.auth0.com/.well-known/jwks.json
+    - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+    - AUTH0_DOMAIN=mino-staging.auth0.com
+    - MINO_API_BASE_URL=https://mino-api-staging.int.us-east-1.dev.gen6bk.com
+    - WEBHOOKS_BASE_URL=https://mino-api-staging.int.us-east-1.dev.gen6bk.com
+    - GEN6_TEST-CAPABILITIES_OAUTH_AUTHORIZED-CLIENT-IDS_0=xzCImQhL3rgkNtalA4ZPTByxB691jyrN
+    - GEN6_TEST-CAPABILITIES_CARDS_CLIENT_HTTP_TIMEOUTS_READ-TIMEOUT=20s
+    - FNBO_MARQETA_TRANSACTION_SIMULATOR_URL=https://api.dev.fnbo.io/
+    - SPRING_PROFILES_ACTIVE=int
+    - PLAID_URL=https://mino-api-staging.int.us-east-1.dev.gen6bk.com/plaid-mock/v1/
+    - PLAID_REQUEST_LOG_LEVEL=BODY
+    - PLAID_HTTP_READ_TIMEOUT=25s
+    - PLAID_LINK_CUSTOMIZATION_NAME=int
+    - PLAID_REDIRECT_URI=https://links.int.dev.gen6bk.com/
+  name: mino-test-capabilities-env-vars
+- behavior: merge
+  literals:
+  - APP_LOGGING_LEVEL=info
+  - ENHANCED_WEBHOOK_RESPONSES=true
+  - MX_URL=https://vestibule.mx.com/transactions/cleanse_and_categorize
+  - FOUNDRY_API_URL=https://graphql.mino-bank.foundry-demo.io/graphql
+  - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+  - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+  - SWAGGER_ENABLED=false
+  - SENTRY_ENVIRONMENT=int
+  - MARQETA_URL=https://11fs-dev.marqeta.com/v3/
+  - MARQETA_USERNAME=11fs_sandbox_api_consumer
+  - SPRING_KAFKA_BOOTSTRAP_SERVERS=cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+  - KAFKA_TOPIC_PARTITION_COUNT=4
+  - KAFKA_TOPIC_REPLICATION_FACTOR=1
+  - POSTGRES_HOST=mino-postgres
+  - POSTGRES_DATABASE=mino
+  - NOTIFICATION_BODY_PREFIX=Int
+  - LOGGING_LEVEL_ORG_JOOQ=DEBUG
+  - TWILIO_ACCOUNT_SERVICE_ID=AC6c862a31d337562432d6bd78b2694432
+  - TWILIO_SERVICE_ID=IS20634a53a1cf25e61fc44ae45f775bb8
+  - FNBO_URL=https://api.dev.fnbo.io/
+  # - FNBO_URL=https://api.staging.fnbo.io/
+  name: mino-transactions-env-vars
+- behavior: merge
+  literals:
+  - APP_LOGGING_LEVEL=debug
+  - SPRING_KAFKA_BOOTSTRAP_SERVERS=cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+  - SPRING_KAFKA_TOPIC_DEFAULTS_PARTITION_COUNT=12
+  - SPRING_KAFKA_TOPIC_DEFAULTS_REPLICATION_FACTOR=3
+  - SENTRY_ENVIRONMENT=int
+  name: mino-webhooks-env-vars
+- behavior: merge
+  literals:
+  - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+  - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+  - SWAGGER_ENABLED=false
+  - SENTRY_ENVIRONMENT=int
+  name: mino-insights-env-vars
+- behavior: merge
+  literals:
+  - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+  - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+  - SWAGGER_ENABLED=false
+  - SENTRY_ENVIRONMENT=int
+  - MARQETA_URL=https://11fs-dev.marqeta.com/
+  - MARQETA_USERNAME=11fs_sandbox_api_consumer
+  - FNBO_URL=https://api.dev.fnbo.io/
+  name: mino-kyc-env-vars
+- behavior: merge
+  literals:
+    - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+    - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+    - SWAGGER_ENABLED=false
+    - SENTRY_ENVIRONMENT=int
+    - MANAGEMENT_HEALTH_REDIS_ENABLED=false
+    - SPRING_REDIS_CLUSTER_NODES=clustercfg.int-us-east-1.bmoam9.use1.cache.amazonaws.com:6379
+    - SPRING_REDIS_SSL=true
+  name: mino-plaid-mock-env-vars
+- behavior: merge
+  literals:
+    - MANAGEMENT_HEALTH_REDIS_ENABLED=false
+    - SPRING_REDIS_CLUSTER_NODES=clustercfg.int-us-east-1.bmoam9.use1.cache.amazonaws.com:6379
+    - SPRING_REDIS_SSL=true
+    - GEN6_REGISTRATIONS_DEVICE_TOKEN_LIMIT_CHECKER_MAX_ALLOWED_ATTEMPTS=10
+    - GEN6_REGISTRATIONS_DEVICE_TOKEN_LIMIT_CHECKER_EXPIRY=10m
+    - GEN6_REGISTRATIONS_EMAIL_LIMIT_CHECKER_EXPIRY=10m
+    - GEN6_REGISTRATIONS_APNS_ALLOW_USAGE_OF_DEV_HOST=true
+    - GEN6_REGISTRATIONS_APNS_DEV_HOST=api.development.push.apple.com
+    - GEN6_REGISTRATIONS_IDENTITY_HTTP_TIMEOUTS_READ-TIMEOUT=10s
+    - APP_LOGGING_LEVEL=debug
+    - REGISTRATION_EXPIRY=15m
+    - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+    - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+    - SENTRY_ENVIRONMENT=int
+    - APNS_APP_BUNDLE_ID=com.fnni.milli.int
+    - APNS_HOST=api.push.apple.com
+    - FILTER_TRACE_REQUEST_HEADERS=false
+    - LOGGING_LEVEL_COM_EATTHEPATH_PUSHY=TRACE
+    - APNS_DEV_HOST=api.sandbox.push.apple.com
+  name: mino-registrations-env-vars
+- behavior: merge
+  literals:
+    - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+    - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+    - APP_LOGGING_LEVEL=debug
+    - SENTRY_ENVIRONMENT=int
+  name: mino-reporting-env-vars
+- behavior: merge
+  literals:
+    - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+    - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json    
+    - APP_LOGGING_LEVEL=debug
+    - SENTRY_ENVIRONMENT=int
+    - TWILIO_ACCOUNT_SERVICE_ID=AC6c862a31d337562432d6bd78b2694432
+    - TWILIO_SERVICE_ID=IS20634a53a1cf25e61fc44ae45f775bb8
+    - TWILIO_VERIFY_SERVICE_ID=VA130f1f192eff8252bc73b5a655bffb8d
+  name: mino-notification-env-vars
+- behavior: merge
+  literals:
+    - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+    - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+    - APP_LOGGING_LEVEL=debug
+    - SENTRY_ENVIRONMENT=int
+    - SPRING_KAFKA_BOOTSTRAP_SERVERS=cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+    - SPRING_KAFKA_TOPIC_DEFAULTS_PARTITION_COUNT=12
+    - SPRING_KAFKA_TOPIC_DEFAULTS_REPLICATION_FACTOR=3
+    - POSTGRES_HOST=mino-postgres
+  name: mino-transfer-rules-env-vars
+- behavior: merge
+  literals:
+    - AUTH0_ISSUER_URL=https://mino-staging.auth0.com/
+    - AUTH0_JWKS_URL=https://assets.int.dev.gen6bk.com/jwks.json
+    - SENTRY_ENVIRONMENT=int
+    - SPRING_KAFKA_BOOTSTRAP_SERVERS=cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+  name: mino-audit-env-vars
+

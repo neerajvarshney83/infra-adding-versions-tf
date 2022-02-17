@@ -1,0 +1,145 @@
+### The following resources are provided with fake data in order to prevent them from running on prod
+---
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: infra-cd-webhook-run
+  namespace: tekton-pipelines
+spec:
+  params:
+  - name: GitHubOrg
+    value: 11FSConsulting
+  - name: GitHubUser
+    value: doesnotexist
+  - name: GitHubRepo
+    value: doesnotexist
+  - name: GitHubSecretName
+    value: git-webhook
+  - name: ExternalDomain
+    value: infra-updater.sandbox.11fs-structs.com
+  serviceAccountName: tekton-triggers-createwebhook
+  taskRef:
+    name: doesnotexist
+  timeout: 1000s
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: infra-cd
+  namespace: tekton-pipelines
+spec:
+  params:
+  - default: k8s/doesnotexist
+    description: The path to the kustomize dir we're applying, relative to repo root
+    name: kustomizeDir
+  - default: https://github.com/11fsconsulting/doesnotexist.git
+    description: The path to the Github repository we should apply
+    name: git-url
+  - default: doesnotexist
+    description: The revision or tag to apply
+    name: git-revision
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: terraform-cd
+  namespace: tekton-pipelines
+spec:
+  params:
+  - default: terraform/doesnotexist
+    description: The path to the terraform dir we're applying, relative to repo root
+    name: terraformDir
+  - default: https://github.com/11fsconsulting/doesnotexist.git
+    description: The path to the Github repository we should apply
+    name: git-url
+  - default: doesnotexist
+    description: The revision or tag to apply
+    name: git-revision
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: kops-cd
+  namespace: tekton-pipelines
+spec:
+  params:
+  - default: k8s/doesnotexist.yaml
+    description: The path to the kops file we're applying, relative to repo root
+    name: kopsFile
+  - default: https://github.com/11fsconsulting/doesnotexist.git
+    description: The path to the Github repository we should apply
+    name: git-url
+  - default: doesnotexist
+    description: The revision or tag to apply
+    name: git-revision
+### end faked out data
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: nginx-internal
+    nginx.ingress.kubernetes.io/auth-signin: https://auth.us-east-1.prod.milli-bank.com/oauth2/start?rd=https%3A%2F%2F$host$request_uri
+    nginx.ingress.kubernetes.io/auth-url: https://auth.us-east-1.prod.milli-bank.com/oauth2/auth
+spec:
+  tls:
+  - secretName: tekton-dashboard-tls
+    hosts:
+    - tekton.us-east-1.prod.milli-bank.com
+  rules:
+  - host: tekton.us-east-1.prod.milli-bank.com
+    http:
+      paths:
+      - backend:
+          serviceName: tekton-dashboard
+          servicePort: 9097
+---
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: infra-cd-prod-webhook-run
+  namespace: tekton-pipelines
+spec:
+  params:
+  - name: GitHubOrg
+    value: gen6-ventures
+  - name: GitHubUser
+    value: gen6-cicd
+  - name: GitHubRepo
+    value: infra
+  - name: GitHubSecretName
+    value: git-webhook
+  - name: ExternalDomain
+    value: infra-cd-prod.sandbox.11fs-structs.com
+  - name: WebhookEvents
+    value: '[\"release\"]'
+  serviceAccountName: tekton-triggers-createwebhook
+  taskRef:
+    name: create-prod-webhook
+    kind: Task
+  timeout: 1000s
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: infra-cd-prod
+  namespace: tekton-pipelines
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx-external
+spec:
+  tls:
+  - hosts:
+    - infra-cd-prod.us-east-1.prod.milli-bank.com
+    secretName: infra-cd-prod-tls
+  rules:
+  - host: infra-cd-prod.us-east-1.prod.milli-bank.com 
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: el-infra-cd-prod
+          servicePort: 8080

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mino-registrations
+  labels:
+    app: mino-registrations
+spec:
+  ports:
+    - port: 8443
+      name: https
+    - port: 8081
+      name: http-actuator
+  selector:
+    app: mino-registrations
+  type: ClusterIP

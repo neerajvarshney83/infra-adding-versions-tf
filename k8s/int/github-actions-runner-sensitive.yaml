@@ -1,0 +1,9 @@
+apiVersion: 'kubernetes-client.io/v1'
+kind: ExternalSecret
+metadata:
+  name: controller-manager
+  namespace: actions-runner-system
+secretDescriptor:
+  backendType: secretsManager
+  dataFrom:
+  - github-actions-controller-app-int

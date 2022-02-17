@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - disruptionbudget.yaml
+  - service.yaml
+  - service-monitor.yaml
+
+configMapGenerator:
+  - name: mino-accounts-env-vars
+    literals:
+      - SWAGGER_ENABLED=false
+      - SENTRY_DSN=https://146ad26ae4854d28972ab7c241f3504d@sentry.io/1863149
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+      - SPRING_KAFKA_TOPIC_DEFAULTS_PARTITION_COUNT=12
+      - SPRING_KAFKA_TOPIC_DEFAULTS_REPLICATION_FACTOR=3

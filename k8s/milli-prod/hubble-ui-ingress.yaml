@@ -1,0 +1,41 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hubble-ui
+  namespace: kube-system
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: nginx-internal
+    nginx.ingress.kubernetes.io/auth-url: "https://auth.us-east-1.prod.milli-bank.com/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://auth.us-east-1.prod.milli-bank.com/oauth2/start?rd=https%3A%2F%2F$host$request_uri"
+spec:
+  tls:
+    - hosts:
+        - hubble.us-east-1.prod.milli-bank.com
+      secretName: hubble-tls-secret
+  rules:
+    - host: hubble.us-east-1.prod.milli-bank.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: hubble-ui
+              servicePort: 80
+
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: hubble
+  namespace: eck
+  labels:
+    internal: "true"
+spec:
+  secretName: hubble-tls-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: hubble.us-east-1.prod.milli-bank.com
+  dnsNames:
+    - hubble.us-east-1.prod.milli-bank.com

@@ -1,0 +1,39 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: mino-api
+  namespace: prod
+spec:
+  secretName: mino-api-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: mino-api.us-east-1.prod.milli-bank.com
+  dnsNames:
+    - mino-api.us-east-1.prod.milli-bank.com
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: milli-ops-ui
+spec:
+  secretName: milli-ops-ui-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: ops-ui.milli-bank.com
+  dnsNames:
+    - ops-ui.milli-bank.com
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: milli-helios
+spec:
+  secretName: milli-helios-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: helios.milli-bank.com
+  dnsNames:
+    - helios.milli-bank.com

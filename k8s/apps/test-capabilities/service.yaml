@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mino-test-capabilities
+  labels:
+    app: mino-test-capabilities
+    discoverable-swagger: enabled
+spec:
+  ports:
+    - port: 8443
+      name: https
+    - port: 8081
+      name: http-actuator
+  selector:
+    app: mino-test-capabilities
+  type: ClusterIP

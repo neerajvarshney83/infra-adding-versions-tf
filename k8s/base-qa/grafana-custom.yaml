@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: grafana
+  name: grafana
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    spec:
+      containers:
+        - name: grafana
+          volumeMounts:
+            - mountPath: /grafana-dashboard-definitions/0/top-up-insights-monthly
+              name: grafana-dashboard-top-up-insights-monthly
+              readOnly: false
+            - mountPath: /grafana-dashboard-definitions/0/top-up-insights-all-time
+              name: grafana-dashboard-top-up-insights-all-time
+              readOnly: false
+            - mountPath: /grafana-dashboard-definitions/0/customer-metrics
+              name: grafana-dashboard-customer-metrics
+              readOnly: false
+            - mountPath: /grafana-dashboard-definitions/0/deployments
+              name: grafana-dashboard-deployments
+              readOnly: false
+            - mountPath: /grafana-dashboard-definitions/0/blackbox
+              name: grafana-dashboard-blackbox
+              readOnly: false
+            - mountPath: /grafana-dashboard-definitions/0/development
+              name: grafana-dashboard-development
+              readOnly: false
+            - mountPath: /grafana-dashboard-definitions/0/api-tests
+              name: grafana-dashboard-api-tests
+              readOnly: false
+          env:
+            - name: GF_INSTALL_PLUGINS
+              value: "grafana-worldmap-panel,grafana-github-datasource,flant-statusmap-panel"
+      volumes:
+        - configMap:
+            name: grafana-dashboard-top-up-insights-monthly
+          name: grafana-dashboard-top-up-insights-monthly
+        - configMap:
+            name: grafana-dashboard-top-up-insights-all-time
+          name: grafana-dashboard-top-up-insights-all-time
+        - configMap:
+            name: grafana-dashboard-customer-metrics
+          name: grafana-dashboard-customer-metrics
+        - configMap:
+            name: grafana-dashboard-deployments
+          name: grafana-dashboard-deployments
+        - configMap:
+            name: grafana-dashboard-blackbox
+          name: grafana-dashboard-blackbox
+        - configMap:
+            name: grafana-dashboard-development
+          name: grafana-dashboard-development
+        - configMap:
+            name: grafana-dashboard-api-tests
+          name: grafana-dashboard-api-tests

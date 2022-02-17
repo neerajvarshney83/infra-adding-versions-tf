@@ -1,0 +1,68 @@
+---
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: mino-audit
+  labels:
+    app: mino-audit
+    db: "mino"
+  annotations:
+    configmap.reloader.stakater.com/reload: "mino-audit-env-vars"
+    secret.reloader.stakater.com/reload: "mino-db-audit-user"
+spec:
+  progressDeadlineSeconds: 140
+  selector:
+    matchLabels:
+      app: mino-audit
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: mino-audit
+        db: "mino"
+    spec:
+      containers:
+        - image: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-audit:latest
+          name: mino-audit
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mino-audit-env-vars
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-db-audit-user
+                  key: PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mino-db-audit-user
+                  key: ROLE
+          ports:
+            - containerPort: 8443
+              name: https
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 90
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 90
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "768Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1536Mi"

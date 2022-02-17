@@ -1,0 +1,329 @@
+apiVersion: kops.k8s.io/v1alpha2
+kind: Cluster
+metadata:
+  creationTimestamp: "2020-08-25T14:34:44Z"
+  generation: 9
+  name: us-east-1.prod.milli-bank.com
+spec:
+  additionalPolicies:
+    master: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "kms:CreateGrant",
+            "kms:Decrypt",
+            "kms:DescribeKey",
+            "kms:Encrypt",
+            "kms:GenerateDataKey*",
+            "kms:ReEncrypt*"
+          ],
+          "Resource": [
+            "arn:aws:kms:us-east-1:850315125037:key/242d3d37-60ac-4ced-920b-e4e97cbbf181"
+          ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetResourcePolicy",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:ListSecretVersionIds"
+            ],
+            "Resource": "arn:aws:secretsmanager:us-east-1:850315125037:secret:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ChangeResourceRecordSets"
+            ],
+            "Resource": [
+                "arn:aws:route53:::hostedzone/Z0755291S7SFI1PP3XRN",
+                "arn:aws:route53:::hostedzone/Z07842532ZQK8L0HIOUYL"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetChange"
+            ],
+            "Resource": [
+                "arn:aws:route53:::change/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ListHostedZones",
+                "route53:ListResourceRecordSets"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:DescribeTags"
+            ],
+            "Resource": [ "*" ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup"
+            ],
+            "Resource": [ "arn:aws:autoscaling:::autoScalingGroup::autoScalingGroupName/nodes.us-east-1.prod.milli-bank.com" ]
+        }
+      ]
+    node: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "kms:CreateGrant",
+            "kms:Decrypt",
+            "kms:DescribeKey",
+            "kms:Encrypt",
+            "kms:GenerateDataKey*",
+            "kms:ReEncrypt*"
+          ],
+          "Resource": [
+            "arn:aws:kms:us-east-1:850315125037:key/242d3d37-60ac-4ced-920b-e4e97cbbf181"
+          ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetResourcePolicy",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:ListSecretVersionIds"
+            ],
+            "Resource": "arn:aws:secretsmanager:us-east-1:850315125037:secret:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ChangeResourceRecordSets"
+            ],
+            "Resource": [
+                "arn:aws:route53:::hostedzone/Z0755291S7SFI1PP3XRN",
+                "arn:aws:route53:::hostedzone/Z07842532ZQK8L0HIOUYL"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ListHostedZones",
+                "route53:ListResourceRecordSets"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetChange"
+            ],
+            "Resource": [
+                "arn:aws:route53:::change/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "kms:CreateGrant",
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:GenerateDataKey*",
+                "kms:ReEncrypt*"
+            ],
+            "Resource": [
+                "arn:aws:kms:us-east-1:850315125037:key/c5792ae1-647a-49d9-b5af-c7d01017f8a1"
+            ]
+        },
+        {
+            "Sid": "DownloadandUpload",
+            "Action": [
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:PutObject",
+                "s3:PutObjectAcl"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::gen6-prod-prod-logs/*"
+        },
+        {
+            "Sid": "ListBucket",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::gen6-prod-prod-logs"
+        }
+      ]
+  api:
+    loadBalancer:
+      class: Classic
+      type: Internal
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  clusterAutoscaler:
+    enabled: true
+    skipNodesWithLocalStorage: true
+    skipNodesWithSystemPods: true
+  configBase: s3://us-east-1-prod-milli-state/us-east-1.prod.milli-bank.com
+  containerRuntime: docker
+  dnsZone: Z07842532ZQK8L0HIOUYL
+  etcdClusters:
+  - cpuRequest: 200m
+    etcdMembers:
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1a
+      name: a
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1b
+      name: b
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1c
+      name: c
+    memoryRequest: 100Mi
+    name: main
+  - cpuRequest: 100m
+    etcdMembers:
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1a
+      name: a
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1b
+      name: b
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1c
+      name: c
+    memoryRequest: 100Mi
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  certManager:
+    enabled: true
+    managed: false
+  kubeAPIServer:
+    runtimeConfig:
+      "settings.k8s.io/v1alpha1": "true"
+    enableAdmissionPlugins:
+      - NamespaceLifecycle
+      - LimitRanger
+      - ServiceAccount
+      - PersistentVolumeLabel
+      - DefaultStorageClass
+      - DefaultTolerationSeconds
+      - MutatingAdmissionWebhook
+      - ValidatingAdmissionWebhook
+      - NodeRestriction
+      - ResourceQuota
+      - PodPreset
+    apiAudiences:
+    - api
+    - istio-ca
+    authorizationMode: Node,RBAC
+    featureGates:
+      EphemeralContainers: "true"
+    oidcClientID: dex-k8s-authenticator
+    oidcGroupsClaim: groups
+    oidcIssuerURL: https://dex.us-east-1.prod.milli-bank.com
+    oidcUsernameClaim: email
+    serviceAccountIssuer: kubernetes.default.svc
+    serviceAccountKeyFile:
+    - /srv/kubernetes/service-account.key
+    serviceAccountSigningKeyFile: /srv/kubernetes/service-account.key
+  kubeControllerManager:
+    authorizationAlwaysAllowPaths:
+    - /metrics
+    - /healthz
+  kubeDNS:
+    provider: CoreDNS
+  kubeScheduler:
+    authorizationAlwaysAllowPaths:
+    - /metrics
+    - /healthz
+  kubelet:
+    anonymousAuth: false
+    authenticationTokenWebhook: true
+    authorizationMode: Webhook
+    featureGates:
+      EphemeralContainers: "true"
+  kubernetesApiAccess:
+  - 0.0.0.0/0
+  kubernetesVersion: 1.19.11
+  masterInternalName: api.internal.us-east-1.prod.milli-bank.com
+  masterPublicName: api.us-east-1.prod.milli-bank.com
+  networkCIDR: 10.0.0.0/16
+  networkID: vpc-0d7d8805c32b5c08a
+  networking:
+    cilium:
+      hubble:
+        enabled: true
+        metrics:
+        - dns
+        - drop
+        - flow
+        - http
+        - icmp
+        - port-distribution
+        - tcp
+      preallocateBPFMaps: true
+      enablePrometheusMetrics: true
+  nonMasqueradeCIDR: 100.64.0.0/10
+  sshAccess:
+  - 0.0.0.0/0
+  subnets:
+  - cidr: 10.0.10.0/24
+    egress: nat-0a2f183bc85277078
+    id: subnet-0a2d285c162b07002
+    name: us-east-1a
+    type: Private
+    zone: us-east-1a
+  - cidr: 10.0.11.0/24
+    egress: nat-0c9c075f3da46ef33
+    id: subnet-06442270744046785
+    name: us-east-1b
+    type: Private
+    zone: us-east-1b
+  - cidr: 10.0.12.0/24
+    egress: nat-0f7f023cef9a4fe76
+    id: subnet-05320f996fe90fe63
+    name: us-east-1c
+    type: Private
+    zone: us-east-1c
+  - cidr: 10.0.0.0/24
+    id: subnet-0f100f0341e13a3bf
+    name: utility-us-east-1a
+    type: Utility
+    zone: us-east-1a
+  - cidr: 10.0.1.0/24
+    id: subnet-055c32e31f84a1401
+    name: utility-us-east-1b
+    type: Utility
+    zone: us-east-1b
+  - cidr: 10.0.2.0/24
+    id: subnet-0077b6884ae657322
+    name: utility-us-east-1c
+    type: Utility
+    zone: us-east-1c
+  topology:
+    bastion:
+      bastionPublicName: bastion.us-east-1.prod.milli-bank.com
+    dns:
+      type: Private
+    masters: private
+    nodes: private

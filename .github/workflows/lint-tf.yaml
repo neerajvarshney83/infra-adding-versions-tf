@@ -1,0 +1,34 @@
+# This will automatically lint terraform files in PRs in order to ensure that they will actually correctly deploy to environment
+name: Terraform lint
+on:
+  pull_request:
+    paths:
+    - 'terraform/**'
+    types:
+    - opened
+    - reopened
+    - edited
+    - synchronize
+    - ready_for_review
+    - labeled
+    - unlabeled
+    - unlocked
+  pull_request_review:
+    types:
+    - submitted
+  check_suite:
+    types:
+    - completed
+  status: {}
+jobs:
+  lint_tf:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Lint Terraform on PR
+      env:
+        TERRAFORM_VERSION: "0.15.0"
+        TFLINT_VERSION: "v0.28.0"
+        TFSEC_VERSION: "v0.39.24"
+      run: |
+        ./.github/workflows/lint-tf.sh

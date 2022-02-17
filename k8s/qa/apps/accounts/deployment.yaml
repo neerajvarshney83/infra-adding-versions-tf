@@ -1,0 +1,20 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mino-accounts
+spec:
+  template:
+    spec:
+      containers:
+      - name: mino-accounts
+        env:
+          - name: PLAID_MOCK_API_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mino-test-capabilities-api-password
+                key: password
+  replicas: 0
+  selector:
+    matchLabels:
+      app: mino-accounts

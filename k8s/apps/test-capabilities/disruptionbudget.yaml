@@ -1,0 +1,10 @@
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: mino-test-capabilities
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: mino-test-capabilities

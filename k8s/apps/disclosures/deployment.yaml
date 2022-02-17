@@ -1,0 +1,70 @@
+---
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    secret.reloader.stakater.com/reload: "milli-server-tls,rds-cert,mino-db-disclosures-user"
+    configmap.reloader.stakater.com/reload: "mino-disclosures-env-vars"
+  name: mino-disclosures
+  labels:
+    app: mino-disclosures
+    db: "mino"
+    auth: "okta"
+spec:
+  progressDeadlineSeconds: 140
+  selector:
+    matchLabels:
+      app: mino-disclosures
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: mino-disclosures
+        db: "mino"
+        auth: "okta"
+    spec:
+      containers:
+        - image: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-disclosures:latest
+          name: mino-disclosures
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mino-disclosures-env-vars
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-db-disclosures-user
+                  key: PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mino-db-disclosures-user
+                  key: ROLE
+          ports:
+            - containerPort: 8443
+              name: https
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "125m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1024Mi"

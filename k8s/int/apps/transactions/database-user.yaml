@@ -1,0 +1,10 @@
+---
+apiVersion: db.movetokube.com/v1alpha1
+kind: PostgresUser
+metadata:
+  name: transactions-user
+spec:
+  role: transactions
+  database: mino-transactions
+  secretName: mino-db
+  privileges: OWNER 

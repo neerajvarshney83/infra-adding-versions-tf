@@ -1,0 +1,66 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: cilium
+    role.kubernetes.io/networking: "1"
+  name: cilium-metrics
+  namespace: kube-system
+spec:
+  ports:
+  - name: prometheus
+    port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    k8s-app: cilium
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.cilium/app: operator
+    role.kubernetes.io/networking: "1"
+  name: cilium-operator-metrics
+  namespace: kube-system
+spec:
+  ports:
+  - name: prometheus
+    port: 6942
+    protocol: TCP
+    targetPort: 6942
+  selector:
+    io.cilium/app: operator
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: cilium
+  name: cilium-metrics
+  namespace: kube-system
+spec:
+  endpoints:
+  - port: prometheus
+  selector:
+    matchLabels:
+      k8s-app: cilium
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    io.cilium/app: operator
+  name: cilium-operator-metrics
+  namespace: kube-system
+spec:
+  endpoints:
+  - port: prometheus
+  selector:
+    matchLabels:
+      io.cilium/app: operator

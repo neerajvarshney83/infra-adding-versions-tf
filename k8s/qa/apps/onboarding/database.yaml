@@ -1,0 +1,9 @@
+---
+apiVersion: db.movetokube.com/v1alpha1
+kind: Postgres
+metadata:
+  name: mino-onboarding
+spec:
+  database: mino
+  schemas:
+  - onboarding 

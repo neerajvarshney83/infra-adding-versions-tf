@@ -1,0 +1,16 @@
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: auth
+  namespace: auth
+  labels:
+    internal: "true"
+spec:
+  secretName: auth-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: auth.qa.us-east-1.dev.gen6bk.com
+  dnsNames:
+    - auth.qa.us-east-1.dev.gen6bk.com

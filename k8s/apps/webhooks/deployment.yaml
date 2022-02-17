@@ -1,0 +1,70 @@
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: mino-webhooks
+  labels:
+    app: mino-webhooks
+  annotations:
+    configmap.reloader.stakater.com/reload: "mino-webhooks-env-vars"
+    secret.reloader.stakater.com/reload: "milli-server-tls,mino-webhooks-marqeta-secret,mino-webhooks-fnbo-secret"
+spec:
+  progressDeadlineSeconds: 140
+  selector:
+    matchLabels:
+      app: mino-webhooks
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: mino-webhooks
+    spec:
+      containers:
+        - image: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-webhooks:latest
+          name: mino-webhooks
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mino-webhooks-env-vars
+          env:
+            - name: MARQETA_WEBHOOK_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mino-webhooks-marqeta-secret
+                  key: username
+            - name: MARQETA_WEBHOOK_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-webhooks-marqeta-secret
+                  key: password
+            - name: MARQETA_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mino-webhooks-marqeta-secret
+                  key: secret
+            - name: FNBO_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mino-webhooks-fnbo-secret
+                  key: secret
+          ports:
+            - containerPort: 8443
+              name: https
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 45
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "125m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1024Mi"

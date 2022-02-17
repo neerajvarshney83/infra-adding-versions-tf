@@ -1,0 +1,10 @@
+---
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: mino-cards
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: mino-cards

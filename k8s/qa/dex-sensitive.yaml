@@ -1,0 +1,86 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx-internal
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  labels:
+    app: platform-dex
+    chart: dex-1.2.0
+    env: prod
+    heritage: Helm
+    release: platform
+  name: platform-dex-rbac
+  namespace: dex-rbac
+spec:
+  rules:
+  - host: dex.qa.us-east-1.dev.gen6bk.com
+    http:
+      paths:
+      - backend:
+          serviceName: platform-dex
+          servicePort: 5556
+        path: /
+  tls:
+  - hosts:
+    - dex.qa.us-east-1.dev.gen6bk.com
+    secretName: cert-auth-dex
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: cert-auth-dex
+  namespace: dex-rbac
+  labels:
+    internal: "true"
+spec:
+  secretName: cert-auth-dex
+  dnsNames:
+    - dex.qa.us-east-1.dev.gen6bk.com
+  commonName: dex.qa.us-east-1.dev.gen6bk.com
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: cert-auth-login
+  namespace: dex-k8s-auth
+  labels:
+    internal: "true"
+spec:
+  secretName: cert-auth-login
+  dnsNames:
+    - login.int.us-east-1.dev.gen6bk.com
+  commonName: login.int.us-east-1.dev.gen6bk.com
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: dex-cluster-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: Group
+    name: "gen6-ventures:Platform"
+  - kind: Group
+    name: "gen6-ventures:Development Leads"
+---
+apiVersion: 'kubernetes-client.io/v1'
+kind: ExternalSecret
+metadata:
+  name: platform-dex-tls
+  namespace: dex-rbac
+secretDescriptor:
+  template:
+    type: kubernetes.io/tls
+  backendType: secretsManager
+  dataFrom:
+    - dex-cert-qa

@@ -1,0 +1,73 @@
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: mino-api-tests
+  labels:
+    app: mino-api-tests
+    db: "mino"
+  annotations:
+    secret.reloader.stakater.com/reload: "milli-server-tls,mino-api-tests-db-password,mino-test-capabilities-api-password"
+    configmap.reloader.stakater.com/reload: "mino-api-tests-env-vars"
+spec:
+  progressDeadlineSeconds: 140
+  selector:
+    matchLabels:
+      app: mino-api-tests
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: mino-api-tests
+        db: "mino"
+    spec:
+      serviceAccountName: api-tests
+      containers:
+        - image: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-api-tests:latest
+          name: mino-api-tests
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mino-api-tests-env-vars
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-api-tests-db-password
+                  key: password
+            - name: API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-api-password
+                  key: password
+            - name: TEST_CAPABILITIES_API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-test-capabilities-api-password
+                  key: password
+          ports:
+            - containerPort: 8443
+              name: https
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health
+            initialDelaySeconds: 75
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "125m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1024Mi"

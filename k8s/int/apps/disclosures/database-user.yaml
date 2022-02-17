@@ -1,0 +1,10 @@
+---
+apiVersion: db.movetokube.com/v1alpha1
+kind: PostgresUser
+metadata:
+  name: disclosures-user
+spec:
+  role: disclosures
+  database: mino-disclosures
+  secretName: mino-db
+  privileges: OWNER 

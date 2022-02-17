@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mino-transfer-rules
+  labels:
+    app: mino-transfer-rules
+    discoverable-swagger: enabled
+spec:
+  ports:
+    - port: 8443
+      name: https
+    - port: 8081
+      name: http-actuator
+  selector:
+    app: mino-transfer-rules
+  type: ClusterIP

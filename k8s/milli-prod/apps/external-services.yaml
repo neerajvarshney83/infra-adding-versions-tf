@@ -1,0 +1,33 @@
+# Note that Postgres currently exists outside the K8 cluster. This merely provides an easy to use address.kind: Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mino-postgres
+spec:
+  type: ExternalName
+  externalName: gen6prod.cluster-cep1en8vhbzn.us-east-1.rds.amazonaws.com 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin
+spec:
+  type: ExternalName
+  externalName: stream-collector.jaeger.svc.cluster.local
+---
+# Note that ElastiCache currently exists outside the K8 cluster. This merely provides an easy to use address.kind: Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis 
+spec:
+  type: ExternalName
+  externalName: clustercfg.gen6prod.d3ovq5.use1.cache.amazonaws.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-schema-registry
+spec:
+  type: ExternalName
+  externalName: platform-cp-schema-registry.kafka.svc.cluster.local

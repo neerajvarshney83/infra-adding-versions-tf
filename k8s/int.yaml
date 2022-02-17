@@ -1,0 +1,328 @@
+apiVersion: kops.k8s.io/v1alpha2
+kind: Cluster
+metadata:
+  creationTimestamp: "2020-06-01T14:19:29Z"
+  generation: 30
+  name: int.us-east-1.dev.gen6bk.com
+spec:
+  additionalPolicies:
+    master: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "kms:CreateGrant",
+            "kms:Decrypt",
+            "kms:DescribeKey",
+            "kms:Encrypt",
+            "kms:GenerateDataKey*",
+            "kms:ReEncrypt*"
+          ],
+          "Resource": [
+            "arn:aws:kms:us-east-1:629239191919:key/4af86a56-640f-4b71-a47c-2e80088af4fd"
+          ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetResourcePolicy",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:ListSecretVersionIds"
+            ],
+            "Resource": "arn:aws:secretsmanager:*:629239191919:secret:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ChangeResourceRecordSets"
+            ],
+            "Resource": [
+                "arn:aws:route53:::hostedzone/Z0482885E50GAGQFJ96I",
+                "arn:aws:route53:::hostedzone/Z04890413NIM66IK51L6J"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetChange"
+            ],
+            "Resource": [
+                "arn:aws:route53:::change/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ListHostedZones",
+                "route53:ListResourceRecordSets"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:DescribeTags"
+            ],
+            "Resource": [ "*" ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup"
+            ],
+            "Resource": [ "arn:aws:autoscaling:us-east-1:629239191919:::autoScalingGroupName/nodes.int.us-east-1.dev.gen6bk.com" ]
+        }
+      ]
+    node: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "kms:CreateGrant",
+            "kms:Decrypt",
+            "kms:DescribeKey",
+            "kms:Encrypt",
+            "kms:GenerateDataKey*",
+            "kms:ReEncrypt*"
+          ],
+          "Resource": [
+            "arn:aws:kms:us-east-1:629239191919:key/4af86a56-640f-4b71-a47c-2e80088af4fd",
+            "arn:aws:kms:us-east-1:629239191919:key/98b506f7-96c2-492d-b44c-737cd03c09d2"
+          ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetResourcePolicy",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:ListSecretVersionIds"
+            ],
+            "Resource": "arn:aws:secretsmanager:*:629239191919:secret:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ChangeResourceRecordSets"
+            ],
+            "Resource": [
+                "arn:aws:route53:::hostedzone/Z0482885E50GAGQFJ96I",
+                "arn:aws:route53:::hostedzone/Z04890413NIM66IK51L6J"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetChange"
+            ],
+            "Resource": [
+                "arn:aws:route53:::change/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ListHostedZones",
+                "route53:ListResourceRecordSets"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+          "Sid": "DownloadandUpload",
+          "Action": [
+            "s3:GetObject",
+            "s3:GetObjectVersion",
+            "s3:PutObject",
+            "s3:PutObjectAcl"
+          ],
+          "Effect": "Allow",
+          "Resource": "arn:aws:s3:::gen6-dev-int-logs/*"
+        },
+        {
+        "Sid": "ListBucket",
+        "Action": [
+          "s3:ListBucket"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::gen6-dev-int-logs"
+        }
+      ]
+  api:
+    loadBalancer:
+      class: Classic
+      type: Internal
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  clusterAutoscaler:
+    enabled: true
+    skipNodesWithLocalStorage: true
+    skipNodesWithSystemPods: true
+  configBase: s3://us-east-1-dev-gen6-state/int.us-east-1.dev.gen6bk.com
+  dnsZone: Z04890413NIM66IK51L6J
+  etcdClusters:
+  - cpuRequest: 200m
+    etcdMembers:
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1a
+      name: a
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1b
+      name: b
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1c
+      name: c
+    memoryRequest: 100Mi
+    name: main
+  - cpuRequest: 100m
+    etcdMembers:
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1a
+      name: a
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1b
+      name: b
+    - encryptedVolume: true
+      instanceGroup: master-us-east-1c
+      name: c
+    memoryRequest: 100Mi
+    name: events
+  fileAssets:
+  - content: |
+      [Unit]
+      Description=Limited resources slice for Kubernetes services
+      Documentation=man:systemd.special(7)
+      DefaultDependencies=no
+      Before=slices.target
+      Requires=-.slice
+      After=-.slice
+    name: podruntime-slice
+    path: /usr/lib/systemd/system/podruntime.slice
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  certManager:
+    enabled: true
+    managed: false
+  kubeAPIServer:
+    anonymousAuth: false
+    runtimeConfig:
+      "settings.k8s.io/v1alpha1": "true"
+    enableAdmissionPlugins:
+    - NamespaceLifecycle
+    - LimitRanger
+    - ServiceAccount
+    - PersistentVolumeLabel
+    - DefaultStorageClass
+    - DefaultTolerationSeconds
+    - MutatingAdmissionWebhook
+    - ValidatingAdmissionWebhook
+    - NodeRestriction
+    - ResourceQuota
+    - PodPreset
+    apiAudiences:
+    - api
+    - istio-ca
+    authorizationMode: Node,RBAC
+    featureGates:
+      EphemeralContainers: "true"
+    oidcClientID: dex-k8s-authenticator
+    oidcGroupsClaim: groups
+    oidcIssuerURL: https://dex.int.us-east-1.dev.gen6bk.com
+    oidcUsernameClaim: email
+    serviceAccountIssuer: kubernetes.default.svc
+    serviceAccountKeyFile:
+    - /srv/kubernetes/service-account.key
+    serviceAccountSigningKeyFile: /srv/kubernetes/service-account.key
+  kubeControllerManager:
+    authorizationAlwaysAllowPaths:
+    - /metrics
+    - /healthz
+  kubeDNS:
+    provider: CoreDNS
+  kubeScheduler:
+    authorizationAlwaysAllowPaths:
+    - /metrics
+    - /healthz
+  kubelet:
+    anonymousAuth: false
+    authenticationTokenWebhook: true
+    authorizationMode: Webhook
+    enforceNodeAllocatable: pods,kube-reserved
+    evictionHard: memory.available<750Mi,nodefs.available<10%,nodefs.inodesFree<5%,imagefs.available<10%,imagefs.inodesFree<5%
+    featureGates:
+      EphemeralContainers: "true"
+    kubeReserved:
+      cpu: 750m
+      memory: 1.3Gi
+    kubeReservedCgroup: /podruntime.slice
+    kubeletCgroups: /podruntime.slice
+    runtimeCgroups: /podruntime.slice
+  kubernetesApiAccess:
+  - 0.0.0.0/0
+  kubernetesVersion: 1.19.11
+  masterInternalName: api.internal.int.us-east-1.dev.gen6bk.com
+  masterKubelet:
+    kubeletCgroups: /podruntime.slice
+    runtimeCgroups: /podruntime.slice
+  masterPublicName: api.int.us-east-1.dev.gen6bk.com
+  networkCIDR: 172.20.0.0/16
+  networking:
+    cilium:
+      hubble:
+        enabled: true
+        metrics:
+        - dns
+        - drop
+        - flow
+        - http
+        - icmp
+        - port-distribution
+        - tcp
+      preallocateBPFMaps: true
+      enablePrometheusMetrics: true
+  nonMasqueradeCIDR: 100.64.0.0/10
+  sshAccess:
+  - 0.0.0.0/0
+  subnets:
+  - cidr: 172.20.32.0/19
+    name: us-east-1a
+    type: Private
+    zone: us-east-1a
+  - cidr: 172.20.64.0/19
+    name: us-east-1b
+    type: Private
+    zone: us-east-1b
+  - cidr: 172.20.96.0/19
+    name: us-east-1c
+    type: Private
+    zone: us-east-1c
+  - cidr: 172.20.0.0/22
+    name: utility-us-east-1a
+    type: Utility
+    zone: us-east-1a
+  - cidr: 172.20.4.0/22
+    name: utility-us-east-1b
+    type: Utility
+    zone: us-east-1b
+  - cidr: 172.20.8.0/22
+    name: utility-us-east-1c
+    type: Utility
+    zone: us-east-1c
+  topology:
+    bastion:
+      bastionPublicName: bastion.int.us-east-1.dev.gen6bk.com
+    dns:
+      type: Private
+    masters: private
+    nodes: private

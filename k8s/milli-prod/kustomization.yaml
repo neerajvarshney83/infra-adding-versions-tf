@@ -1,0 +1,75 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- app-namespace.yaml
+- logging-operator-s3.yaml
+- mutable-storageclass.yaml
+- hubble-ui-ingress.yaml
+- dex-sensitive.yaml
+- tekton-sensitive.yaml
+- tekton-prod.yaml
+- auth-sensitive.yaml
+- postgres.yaml
+- prometheus-ingress.yaml
+- prometheus-sensitive.yaml
+- prometheus-probes.yaml
+- jaeger-sensitive.yaml
+- clusterrole-prodsupport-role.yaml
+- externaldns-public.yaml
+- ../base-old
+- apps
+
+patchesStrategicMerge:
+- aws-cluster-autoscaler-custom.yaml
+- tekton-custom.yaml
+- auth-custom.yaml
+- cert-manager-custom.yaml
+- dex-custom.yaml
+- jaeger-custom.yaml
+- externaldns-custom.yaml
+- kafka-custom.yaml
+- logging-operator-custom.yaml
+- prometheus-custom.yaml
+
+images:
+- {}
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-accounts
+  newTag: 0.2.58-SNAPSHOT-dc89875
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-admin-gateway
+  newTag: 0.1.54-SNAPSHOT-b38b8aa
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-api-gateway
+  newTag: 0.1.43-SNAPSHOT-49fbb00
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-audit
+  newTag: 0.1.4-SNAPSHOT-38591b1
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-cards
+  newTag: 0.1.32-SNAPSHOT-ce62895
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-disclosures
+  newTag: 0.1.14-SNAPSHOT-0532015
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-helios
+  newTag: 0.1.0-dc8bca6
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-identity
+  newTag: 0.1.28-SNAPSHOT-c3d3783
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-insights
+  newTag: 0.1.18-SNAPSHOT-18f213a
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-kyc
+  newTag: 0.1.18-SNAPSHOT-53145b8
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-notification
+  newTag: 0.1.9-SNAPSHOT-b5e2d7c
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-onboarding
+  newTag: 0.1.45-SNAPSHOT-3b8e0c2
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-ops-ui
+  newTag: 87d51d2
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-registrations
+  newTag: 0.1.19-SNAPSHOT-da477e3
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-reporting
+  newTag: 0.2.10-fcfe789
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-transactions
+  newTag: 1.1.64-f14f8f1
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-transfer-rules
+  newTag: 0.1.11-SNAPSHOT-d29ad51
+- name: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-webhooks
+  newTag: 0.2.11-SNAPSHOT-7b206a2
+- name: confluentinc/cp-schema-registry
+  newTag: 5.5.2
+
+

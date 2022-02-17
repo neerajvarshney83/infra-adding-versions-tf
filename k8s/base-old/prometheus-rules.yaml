@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: k8s
+    role: alert-rules
+  name: prometheus-event-producer-rules
+  namespace: monitoring
+spec:
+  groups:
+    - name: event-producer.rules
+      rules:
+        - alert: EventProducerBacklog
+          annotations:
+            description: Service {{ $labels.application }} has an event producer backlog of {{ printf "%.0f" $value }} event(s).
+            summary: Event Producer Backlog
+          expr: (max by (application) (event_producer_backlog)) > 0
+          labels:
+            severity: critical

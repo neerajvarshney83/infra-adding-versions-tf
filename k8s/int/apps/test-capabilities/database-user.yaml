@@ -1,0 +1,10 @@
+---
+apiVersion: db.movetokube.com/v1alpha1
+kind: PostgresUser
+metadata:
+  name: test-capabilities
+spec:
+  role: test-capabilities
+  database: mino-test-capabilities
+  secretName: mino-db
+  privileges: OWNER

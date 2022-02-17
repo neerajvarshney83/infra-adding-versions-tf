@@ -1,0 +1,36 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: androidrunner
+  namespace: actions-runner-system
+spec:
+  template:
+    spec:
+      image: summerwind/actions-runner:v2.278.0-ubuntu-20.04
+      repository: gen6-ventures/mino-mobile 
+      env: []
+      labels:
+        - android-runner
+      resources:
+        limits:
+          cpu: "4"
+          memory: "14Gi"
+        requests:
+          cpu: "2"
+          memory: "8Gi"
+      dockerRegistryMirror: https://mirror.gcr.io/
+---
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: HorizontalRunnerAutoscaler
+metadata:
+  name: androidrunner-autoscaler
+  namespace: actions-runner-system
+spec:
+  scaleTargetRef:
+    name: androidrunner
+  minReplicas: 0
+  maxReplicas: 3
+  metrics:
+  - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
+    repositoryNames:
+    - gen6-ventures/mino-mobile

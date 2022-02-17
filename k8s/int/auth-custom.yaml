@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+data:
+  client-id: NzljNTIwYWRmNjVhNGJiZGM2YzI=
+  client-secret: MjJhMTNlNjM3ZTNmNDM5NjBhYzE2MjU2MzJkZTkxZWViOWI2YTNmMA==
+  cookie-secret: NDZlZmFiMmZkMjUyMGU2MDIwYzY1ZjJjMGIxMDE3ODEK 
+kind: Secret
+metadata:
+  labels:
+    app: oauth2-proxy
+    chart: oauth2-proxy-2.2.1
+    heritage: Helm
+    release: o2p
+  name: o2p-oauth2-proxy
+  namespace: auth
+type: Opaque
+---
+apiVersion: v1
+data:
+  oauth2-proxy.cfg: |-
+    email_domains = [ "*" ]
+    github_org = "gen6-ventures"
+    provider = "github"
+    cookie_domains = [ ".int.us-east-1.dev.gen6bk.com" ]
+    cookie_expire = "1h0m0s"
+    whitelist_domains = [".int.us-east-1.dev.gen6bk.com"]
+kind: ConfigMap
+metadata:
+  labels:
+    app: oauth2-proxy
+    chart: oauth2-proxy-2.2.1
+    heritage: Helm
+    release: o2p
+  name: o2p-oauth2-proxy
+  namespace: auth
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx-internal
+  labels:
+    app: oauth2-proxy
+    chart: oauth2-proxy-2.2.1
+    heritage: Helm
+    release: o2p
+  name: o2p-oauth2-proxy
+  namespace: auth
+spec:
+  rules:
+  - host: auth.int.us-east-1.dev.gen6bk.com
+    http:
+      paths:
+      - backend:
+          serviceName: o2p-oauth2-proxy
+          servicePort: 80
+        path: /
+  tls:
+  - hosts:
+    - auth.int.us-east-1.dev.gen6bk.com
+    secretName: auth-tls

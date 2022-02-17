@@ -1,0 +1,18 @@
+---
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: mino-identity
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mino-identity
+  template:
+    spec:
+      containers:
+        - name: mino-identity
+          env:
+            - name: POSTGRES_USER
+              value: identity
+              valueFrom: null

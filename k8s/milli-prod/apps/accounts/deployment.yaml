@@ -1,0 +1,25 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mino-accounts
+  annotations:
+    secret.reloader.stakater.com/reload: "mino-accounts-marqeta-password,mino-accounts-db-password,mino-accounts-plaid-api"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mino-accounts
+  template:
+    spec:
+      containers:
+        - name: mino-accounts
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mino-accounts-db-password
+                  key: password
+            - name: POSTGRES_USER
+              value: accounts
+              valueFrom: null

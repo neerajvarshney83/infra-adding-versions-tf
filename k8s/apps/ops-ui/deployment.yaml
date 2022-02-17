@@ -1,0 +1,63 @@
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: mino-ops-ui
+  labels:
+    app: mino-ops-ui
+  annotations:
+    configmap.reloader.stakater.com/reload: "mino-ops-ui-env-vars,mino-ops-ui-env-json"
+spec:
+  progressDeadlineSeconds: 60
+  selector:
+    matchLabels:
+      app: mino-ops-ui
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: mino-ops-ui
+      annotations:
+        # The Ops UI is not in the service mesh and cannot route traffic into it
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+        - image: 850315125037.dkr.ecr.us-east-1.amazonaws.com/mino-ops-ui:latest
+          name: mino-ops-ui
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mino-ops-ui-env-vars
+          volumeMounts:
+            - name: mino-ops-ui-env-json
+              mountPath: /usr/share/nginx/html/env.admin.json
+              subPath: env.admin.json
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /index.html
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              port: 80
+              path: /index.html
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              cpu: "1000m"
+              memory: "256Mi"
+      volumes:
+        - name: mino-ops-ui-env-json
+          configMap:
+            name: mino-ops-ui-env-json

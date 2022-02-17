@@ -1,0 +1,48 @@
+---
+apiVersion: kafka.strimzi.io/v1alpha1
+kind: KafkaBridge
+metadata:
+  name: bridge
+  namespace: kafka
+spec:
+  replicas: 1
+  bootstrapServers: cluster-kafka-bootstrap:9092
+  http:
+    port: 8080
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: bridge
+  namespace: kafka 
+spec:
+  secretName: bridge-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: bridge.qa.us-east-1.dev.gen6bk.com
+  dnsNames:
+    - bridge.qa.us-east-1.dev.gen6bk.com
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx-internal
+    nginx.ingress.kubernetes.io/auth-signin: https://auth.qa.us-east-1.dev.gen6bk.com/oauth2/start?rd=https%3A%2F%2F$host$request_uri
+    nginx.ingress.kubernetes.io/auth-url: https://auth.qa.us-east-1.dev.gen6bk.com/oauth2/auth
+  name: bridge
+  namespace: kafka
+spec:
+  rules:
+  - host: bridge.qa.us-east-1.dev.gen6bk.com
+    http:
+      paths:
+      - backend:
+          serviceName: bridge-bridge-service
+          servicePort: 8080
+  tls:
+  - hosts:
+    - bridge.qa.us-east-1.dev.gen6bk.com
+    secretName: bridge-tls

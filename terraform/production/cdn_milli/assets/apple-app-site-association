@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appID": "QPHBP25T4X.com.gen6bk.mino.app",
+        "paths": [
+          "*"
+        ]
+      },
+      {
+        "appID": "RGCFMAJ3N6.com.fnni.milli.app",
+        "paths": [
+          "*"
+        ]
+      }
+    ],
+    "apps": [ ]
+  }
+}

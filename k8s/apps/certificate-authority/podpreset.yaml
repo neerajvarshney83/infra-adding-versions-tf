@@ -1,0 +1,23 @@
+apiVersion: settings.k8s.io/v1alpha1
+kind: PodPreset
+metadata:
+  name: milli-server-tls
+spec:
+  env:
+    - name: SERVER_CERT_KEYSTORE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: milli-server-cert-keystore-password
+          key: password
+    - name: SERVER_CERT_KEYSTORE_PATH
+      value: /etc/ssl/milli-server-tls/keystore.p12
+    - name: SERVER_CERT_CA_PATH
+      value: /etc/ssl/milli-server-tls/ca.crt
+  volumeMounts:
+    - mountPath: /etc/ssl/milli-server-tls
+      name: milli-server-tls
+      readOnly: true
+  volumes:
+    - name: milli-server-tls
+      secret:
+        secretName: milli-server-tls

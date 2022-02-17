@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: platform-sonatype-nexus
+  namespace: sonatype-nexus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonatype-nexus
+      release: platform
+  template:
+    spec:
+      containers:
+      - env:
+        - name: install4jAddVmParams
+          value: -Xms128M -Xmx128M -XX:MaxDirectMemorySize=512M -XX:+UnlockExperimentalVMOptions
+            -XX:+UseCGroupMemoryLimitForHeap
+        name: nexus
+        image: 140554600707.dkr.ecr.eu-west-2.amazonaws.com/platform/sonatype-nexus:latest
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+      - env:
+        - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
+          value: GoogleHC
+        - name: CLOUD_IAM_AUTH_ENABLED
+          value: "false"
+        - name: BIND_PORT
+          value: "8080"
+        - name: ENFORCE_HTTPS
+          value: "false"
+        - name: NEXUS_DOCKER_HOST
+          value: "nexus.int.us-east-1.dev.gen6bk.com"
+        - name: NEXUS_HTTP_HOST
+          value: "nexus.int.us-east-1.dev.gen6bk.com"
+        - name: UPSTREAM_DOCKER_PORT
+          value: "5003"
+        - name: UPSTREAM_HTTP_PORT
+          value: "8081"
+        - name: UPSTREAM_HOST
+          value: localhost
+        name: nexus-proxy
+  volumeClaimTemplates:
+  - metadata:
+      name: platform-sonatype-nexus-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 64Gi
+      storageClassName: stable
+  - metadata:
+      name: platform-sonatype-nexus-backup
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 64Gi
+      storageClassName: stable

@@ -1,0 +1,10 @@
+apiVersion: 'kubernetes-client.io/v1'
+kind: ExternalSecret
+metadata:
+  name: grafana-datasources
+  namespace: monitoring
+secretDescriptor:
+  backendType: secretsManager
+  data:
+    - key: grafana-datasources-prod
+      name: datasources.yaml
